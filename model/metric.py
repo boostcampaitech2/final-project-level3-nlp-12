@@ -1,5 +1,13 @@
 import torch
+import warnings
+warnings.filterwarnings('ignore')
+import sklearn
 
+LABEL_LIST = [
+    "hate",
+    "offensive",
+    "none"
+]
 
 def accuracy(output, target):
     with torch.no_grad():
@@ -18,3 +26,8 @@ def top_k_acc(output, target, k=3):
         for i in range(k):
             correct += torch.sum(pred[:, i] == target).item()
     return correct / len(target)
+
+
+def macro_f1(output, target):
+    label_indices = list(range(len(LABEL_LIST)))
+    return sklearn.metrics.f1_score(target, output, average="macro", labels=label_indices) * 100.0

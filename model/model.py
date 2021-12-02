@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 from base import BaseModel
+from transformers import AutoModelForSequenceClassification
 
 
 class MnistModel(BaseModel):
@@ -20,3 +21,12 @@ class MnistModel(BaseModel):
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
         return F.log_softmax(x, dim=1)
+
+
+class BeepKcElectraHateModel(BaseModel):
+    def __init__(self, name="beomi/beep-KcELECTRA-base-hate", num_classes=3):
+        super().__init__()
+        self.model = AutoModelForSequenceClassification.from_pretrained(name, num_labels=num_classes)
+        
+    def forward(self, inputs):
+        return self.model(**inputs)
