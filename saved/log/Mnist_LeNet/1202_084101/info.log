@@ -1,0 +1,132 @@
+2021-12-02 08:41:06,099 - train - INFO - MnistModel(
+  (conv1): Conv2d(1, 10, kernel_size=(5, 5), stride=(1, 1))
+  (conv2): Conv2d(10, 20, kernel_size=(5, 5), stride=(1, 1))
+  (conv2_drop): Dropout2d(p=0.5, inplace=False)
+  (fc1): Linear(in_features=320, out_features=50, bias=True)
+  (fc2): Linear(in_features=50, out_features=10, bias=True)
+)
+Trainable parameters: 21840
+2021-12-02 08:41:09,399 - trainer - WARNING - Warning: visualization (Tensorboard) is configured to use, but currently not installed on this machine. Please install TensorboardX with 'pip install tensorboardx', upgrade PyTorch to version >= 1.1 to use 'torch.utils.tensorboard' or turn off the option in the 'config.json' file.
+2021-12-02 08:41:16,533 - trainer - INFO -     epoch          : 1
+2021-12-02 08:41:16,534 - trainer - INFO -     loss           : 0.6594328525436433
+2021-12-02 08:41:16,534 - trainer - INFO -     accuracy       : 0.7899907963777928
+2021-12-02 08:41:16,534 - trainer - INFO -     top_k_acc      : 0.9290501227149628
+2021-12-02 08:41:16,534 - trainer - INFO -     val_loss       : 0.12672997923924567
+2021-12-02 08:41:16,534 - trainer - INFO -     val_accuracy   : 0.9595127279635258
+2021-12-02 08:41:16,534 - trainer - INFO -     val_top_k_acc  : 0.9959393996960486
+2021-12-02 08:41:16,537 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch1.pth ...
+2021-12-02 08:41:16,540 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:41:23,526 - trainer - INFO -     epoch          : 2
+2021-12-02 08:41:23,526 - trainer - INFO -     loss           : 0.2915307249856221
+2021-12-02 08:41:23,526 - trainer - INFO -     accuracy       : 0.9134965301286392
+2021-12-02 08:41:23,526 - trainer - INFO -     top_k_acc      : 0.9853905721056195
+2021-12-02 08:41:23,526 - trainer - INFO -     val_loss       : 0.0810020746306536
+2021-12-02 08:41:23,526 - trainer - INFO -     val_accuracy   : 0.9740454027355624
+2021-12-02 08:41:23,527 - trainer - INFO -     val_top_k_acc  : 0.9981715425531915
+2021-12-02 08:41:23,529 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch2.pth ...
+2021-12-02 08:41:23,532 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:41:30,380 - trainer - INFO -     epoch          : 3
+2021-12-02 08:41:30,380 - trainer - INFO -     loss           : 0.23677422318130872
+2021-12-02 08:41:30,381 - trainer - INFO -     accuracy       : 0.9312875550101557
+2021-12-02 08:41:30,381 - trainer - INFO -     top_k_acc      : 0.9895401362559242
+2021-12-02 08:41:30,381 - trainer - INFO -     val_loss       : 0.06835968304980308
+2021-12-02 08:41:30,381 - trainer - INFO -     val_accuracy   : 0.9788421352583586
+2021-12-02 08:41:30,382 - trainer - INFO -     val_top_k_acc  : 0.9985039893617021
+2021-12-02 08:41:30,385 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch3.pth ...
+2021-12-02 08:41:30,388 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:41:37,817 - trainer - INFO -     epoch          : 4
+2021-12-02 08:41:37,818 - trainer - INFO -     loss           : 0.20478648199783683
+2021-12-02 08:41:37,818 - trainer - INFO -     accuracy       : 0.9398670235274205
+2021-12-02 08:41:37,818 - trainer - INFO -     top_k_acc      : 0.9909444820582262
+2021-12-02 08:41:37,818 - trainer - INFO -     val_loss       : 0.06072634450615721
+2021-12-02 08:41:37,818 - trainer - INFO -     val_accuracy   : 0.9819766337386018
+2021-12-02 08:41:37,818 - trainer - INFO -     val_top_k_acc  : 0.9981715425531915
+2021-12-02 08:41:37,821 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch4.pth ...
+2021-12-02 08:41:37,824 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:41:45,008 - trainer - INFO -     epoch          : 5
+2021-12-02 08:41:45,009 - trainer - INFO -     loss           : 0.18686523813736663
+2021-12-02 08:41:45,009 - trainer - INFO -     accuracy       : 0.9447147935003385
+2021-12-02 08:41:45,009 - trainer - INFO -     top_k_acc      : 0.9926661941435342
+2021-12-02 08:41:45,009 - trainer - INFO -     val_loss       : 0.05892045005284091
+2021-12-02 08:41:45,009 - trainer - INFO -     val_accuracy   : 0.9803618920972644
+2021-12-02 08:41:45,009 - trainer - INFO -     val_top_k_acc  : 0.9983377659574468
+2021-12-02 08:41:45,012 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch5.pth ...
+2021-12-02 08:41:45,014 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:41:52,175 - trainer - INFO -     epoch          : 6
+2021-12-02 08:41:52,176 - trainer - INFO -     loss           : 0.18063442658862514
+2021-12-02 08:41:52,176 - trainer - INFO -     accuracy       : 0.9472828156736629
+2021-12-02 08:41:52,176 - trainer - INFO -     top_k_acc      : 0.9929280213270142
+2021-12-02 08:41:52,176 - trainer - INFO -     val_loss       : 0.05096820963824049
+2021-12-02 08:41:52,176 - trainer - INFO -     val_accuracy   : 0.983876329787234
+2021-12-02 08:41:52,176 - trainer - INFO -     val_top_k_acc  : 0.9988364361702128
+2021-12-02 08:41:52,179 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch6.pth ...
+2021-12-02 08:41:52,181 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:41:59,321 - trainer - INFO -     epoch          : 7
+2021-12-02 08:41:59,321 - trainer - INFO -     loss           : 0.16243224753887875
+2021-12-02 08:41:59,321 - trainer - INFO -     accuracy       : 0.9523765445159106
+2021-12-02 08:41:59,322 - trainer - INFO -     top_k_acc      : 0.993909212085308
+2021-12-02 08:41:59,322 - trainer - INFO -     val_loss       : 0.04663896998588709
+2021-12-02 08:41:59,322 - trainer - INFO -     val_accuracy   : 0.9846837006079028
+2021-12-02 08:41:59,322 - trainer - INFO -     val_top_k_acc  : 0.9989789133738602
+2021-12-02 08:41:59,325 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch7.pth ...
+2021-12-02 08:41:59,327 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:42:06,589 - trainer - INFO -     epoch          : 8
+2021-12-02 08:42:06,590 - trainer - INFO -     loss           : 0.15670919711414671
+2021-12-02 08:42:06,590 - trainer - INFO -     accuracy       : 0.9532545912322274
+2021-12-02 08:42:06,591 - trainer - INFO -     top_k_acc      : 0.994112855450237
+2021-12-02 08:42:06,591 - trainer - INFO -     val_loss       : 0.04849820766855586
+2021-12-02 08:42:06,591 - trainer - INFO -     val_accuracy   : 0.9838050911854103
+2021-12-02 08:42:06,591 - trainer - INFO -     val_top_k_acc  : 0.9988364361702128
+2021-12-02 08:42:06,595 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch8.pth ...
+2021-12-02 08:42:13,785 - trainer - INFO -     epoch          : 9
+2021-12-02 08:42:13,786 - trainer - INFO -     loss           : 0.1449280543720694
+2021-12-02 08:42:13,787 - trainer - INFO -     accuracy       : 0.957187288422478
+2021-12-02 08:42:13,787 - trainer - INFO -     top_k_acc      : 0.9951125592417062
+2021-12-02 08:42:13,787 - trainer - INFO -     val_loss       : 0.04295676403203385
+2021-12-02 08:42:13,789 - trainer - INFO -     val_accuracy   : 0.9852061170212766
+2021-12-02 08:42:13,789 - trainer - INFO -     val_top_k_acc  : 0.9988364361702128
+2021-12-02 08:42:13,793 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch9.pth ...
+2021-12-02 08:42:13,796 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:42:20,921 - trainer - INFO -     epoch          : 10
+2021-12-02 08:42:20,921 - trainer - INFO -     loss           : 0.14396269918723975
+2021-12-02 08:42:20,921 - trainer - INFO -     accuracy       : 0.9581737686188219
+2021-12-02 08:42:20,921 - trainer - INFO -     top_k_acc      : 0.9948163507109005
+2021-12-02 08:42:20,921 - trainer - INFO -     val_loss       : 0.04530614824529658
+2021-12-02 08:42:20,922 - trainer - INFO -     val_accuracy   : 0.9856810410334347
+2021-12-02 08:42:20,922 - trainer - INFO -     val_top_k_acc  : 0.9990026595744681
+2021-12-02 08:42:20,925 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch10.pth ...
+2021-12-02 08:42:27,872 - trainer - INFO -     epoch          : 11
+2021-12-02 08:42:27,873 - trainer - INFO -     loss           : 0.14451949206573703
+2021-12-02 08:42:27,873 - trainer - INFO -     accuracy       : 0.9579516122207176
+2021-12-02 08:42:27,873 - trainer - INFO -     top_k_acc      : 0.9943323671293163
+2021-12-02 08:42:27,873 - trainer - INFO -     val_loss       : 0.04197628294771656
+2021-12-02 08:42:27,873 - trainer - INFO -     val_accuracy   : 0.9871058130699089
+2021-12-02 08:42:27,873 - trainer - INFO -     val_top_k_acc  : 0.9990026595744681
+2021-12-02 08:42:27,877 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch11.pth ...
+2021-12-02 08:42:27,880 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:42:35,362 - trainer - INFO -     epoch          : 12
+2021-12-02 08:42:35,362 - trainer - INFO -     loss           : 0.13950328200490553
+2021-12-02 08:42:35,363 - trainer - INFO -     accuracy       : 0.9600250719363574
+2021-12-02 08:42:35,363 - trainer - INFO -     top_k_acc      : 0.9951125592417062
+2021-12-02 08:42:35,363 - trainer - INFO -     val_loss       : 0.04332141865520401
+2021-12-02 08:42:35,363 - trainer - INFO -     val_accuracy   : 0.9856572948328267
+2021-12-02 08:42:35,363 - trainer - INFO -     val_top_k_acc  : 0.9990026595744681
+2021-12-02 08:42:35,366 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch12.pth ...
+2021-12-02 08:42:42,764 - trainer - INFO -     epoch          : 13
+2021-12-02 08:42:42,765 - trainer - INFO -     loss           : 0.1299910891262629
+2021-12-02 08:42:42,765 - trainer - INFO -     accuracy       : 0.9609242764048748
+2021-12-02 08:42:42,765 - trainer - INFO -     top_k_acc      : 0.9953320709207855
+2021-12-02 08:42:42,765 - trainer - INFO -     val_loss       : 0.041115305921498764
+2021-12-02 08:42:42,765 - trainer - INFO -     val_accuracy   : 0.9871533054711246
+2021-12-02 08:42:42,765 - trainer - INFO -     val_top_k_acc  : 0.9991688829787234
+2021-12-02 08:42:42,768 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch13.pth ...
+2021-12-02 08:42:42,771 - trainer - INFO - Saving current best: model_best.pth ...
+2021-12-02 08:42:50,124 - trainer - INFO -     epoch          : 14
+2021-12-02 08:42:50,125 - trainer - INFO -     loss           : 0.13075887325321328
+2021-12-02 08:42:50,125 - trainer - INFO -     accuracy       : 0.961090893703453
+2021-12-02 08:42:50,125 - trainer - INFO -     top_k_acc      : 0.9948507320582262
+2021-12-02 08:42:50,125 - trainer - INFO -     val_loss       : 0.0405689683306883
+2021-12-02 08:42:50,125 - trainer - INFO -     val_accuracy   : 0.986322188449848
+2021-12-02 08:42:50,125 - trainer - INFO -     val_top_k_acc  : 0.9993351063829787
+2021-12-02 08:42:50,128 - trainer - INFO - Saving checkpoint: saved/models/Mnist_LeNet/1202_084101/checkpoint-epoch14.pth ...
+2021-12-02 08:42:50,131 - trainer - INFO - Saving current best: model_best.pth ...
