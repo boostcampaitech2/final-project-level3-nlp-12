@@ -1,0 +1,1 @@
+{"train/loss": 0.2132826791661471, "train/macro_f1": 91.11684090508415, "val/loss": 1.014690424501896, "val/macro_f1": 68.69013760577226, "_runtime": 108, "_timestamp": 1638504504, "_step": 1, "_wandb": {"runtime": 113}}

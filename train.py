@@ -35,7 +35,7 @@ def seed_everything(seed):
 
 def main(config):
     seed_everything(42)
-    wandb.init(project='#TODO', entity='#TODO')
+    wandb.init(project='final-project', entity='jadon')
 
     # build model architecture and tokenizer
     model = config.init_obj('model', module_arch)
@@ -47,11 +47,11 @@ def main(config):
         max_length=config['data_loader']['args']['max_length']
     )
     train_data_loader = dataloader.get_dataloader(
-        os.path.join(os.getcwd()[:-4], config['data_dir']['train']),
+        os.path.join(os.getcwd()[:], config['data_dir']['train']),
         batch_size=config['data_loader']['args']['batch_size']
     )
     valid_data_loader = dataloader.get_dataloader(
-        os.path.join(os.getcwd()[:-4], config['data_dir']['valid']),
+        os.path.join(os.getcwd()[:], config['data_dir']['valid']),
         batch_size=config['data_loader']['args']['batch_size']
     )
 
@@ -97,7 +97,7 @@ def main(config):
 
 if __name__ == '__main__':
     args = argparse.ArgumentParser(description='PyTorch Template')
-    args.add_argument('-c', '--config', default=None, type=str,
+    args.add_argument('-c', '--config', default='config.json', type=str,
                       help='config file path (default: None)')
     args.add_argument('-r', '--resume', default=None, type=str,
                       help='path to latest checkpoint (default: None)')

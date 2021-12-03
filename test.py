@@ -18,7 +18,8 @@ IDX_2_LABEL = {
 
 def main(config):
     # load model and tokenizer architecture
-    model = torch.load(config['model']['type'])
+    # model = torch.load(config['model']['type'])
+    model = torch.load('saved/best/beep_kcELECTRA_base_hate/best_model.pt')
     tokenizer = AutoTokenizer.from_pretrained(config['model']['args']['name'])
 
     # setup data_loader instances
@@ -27,7 +28,7 @@ def main(config):
         max_length=config['data_loader']['args']['max_length']
     )
     data_loader = data_loader.get_dataloader(
-        os.path.join(os.getcwd()[:-4], config['data_dir']['test']),
+        os.path.join(os.getcwd()[:], config['data_dir']['test']),
         batch_size=config['data_loader']['args']['batch_size']
     )
 
@@ -59,18 +60,18 @@ def main(config):
             output_pred.extend(preds.detach().cpu().numpy())
             
     df = pd.read_csv(
-        os.path.join(os.getcwd()[:-4], config['data_dir']['test'])
+        os.path.join(os.getcwd()[:], config['data_dir']['test'])
     )
     df['label'] = output_pred
         
     df.to_csv(
-        os.path.join(os.getcwd()[:-4], 'data/result.csv'),
+        os.path.join(os.getcwd()[:], 'data/result.csv'),
         index=None
     )
 
 if __name__ == '__main__':
     args = argparse.ArgumentParser(description='PyTorch Template')
-    args.add_argument('-c', '--config', default=None, type=str,
+    args.add_argument('-c', '--config', default='config.json', type=str,
                       help='config file path (default: None)')
     args.add_argument('-r', '--resume', default=None, type=str,
                       help='path to latest checkpoint (default: None)')
