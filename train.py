@@ -47,12 +47,16 @@ def main(config):
         tokenizer,
         max_length=config['data_loader']['args']['max_length']
     )
-    train_dataloader = dataloader.get_dataloader(
-        os.path.join(os.getcwd()[:], config['data_dir']['train']),
+    train_data_loader = dataloader.get_dataloader(
+        name='train',
+        data_dir=config['data_dir'], 
+        data_files=config['data_files'],
         batch_size=config['data_loader']['args']['batch_size']
     )
-    valid_dataloader = dataloader.get_dataloader(
-        os.path.join(os.getcwd()[:], config['data_dir']['valid']),
+    valid_data_loader = dataloader.get_dataloader(
+        name='valid',
+        data_dir=config['data_dir'], 
+        data_files=config['data_files'],
         batch_size=config['data_loader']['args']['batch_size']
     )
 
@@ -89,8 +93,8 @@ def main(config):
         optimizer,
         config=config,
         device=device,
-        data_loader=train_dataloader,
-        valid_dataloader=valid_dataloader,
+        data_loader=train_data_loader,
+        valid_data_loader=valid_data_loader,
         lr_scheduler=lr_scheduler
     )
 
