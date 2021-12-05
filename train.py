@@ -15,6 +15,7 @@ from trainer import Trainer
 from utils import prepare_device 
 from transformers import AutoTokenizer
 from data_loader.data_loaders import KhsDataLoader
+from datasets import load_dataset
 
 
 def seed_everything(seed):
@@ -46,11 +47,11 @@ def main(config):
         tokenizer,
         max_length=config['data_loader']['args']['max_length']
     )
-    train_data_loader = dataloader.get_dataloader(
+    train_dataloader = dataloader.get_dataloader(
         os.path.join(os.getcwd()[:], config['data_dir']['train']),
         batch_size=config['data_loader']['args']['batch_size']
     )
-    valid_data_loader = dataloader.get_dataloader(
+    valid_dataloader = dataloader.get_dataloader(
         os.path.join(os.getcwd()[:], config['data_dir']['valid']),
         batch_size=config['data_loader']['args']['batch_size']
     )
@@ -88,8 +89,8 @@ def main(config):
         optimizer,
         config=config,
         device=device,
-        data_loader=train_data_loader,
-        valid_data_loader=valid_data_loader,
+        data_loader=train_dataloader,
+        valid_dataloader=valid_dataloader,
         lr_scheduler=lr_scheduler
     )
 
