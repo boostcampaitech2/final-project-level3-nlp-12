@@ -56,8 +56,8 @@
         "early_stop": 2
     },
     "data_dir": {
-        "train": "data/korean-hate-speech/original/train/train_hate.csv",
-        "valid": "data/korean-hate-speech/original/dev/dev_hate.csv",
-        "test": "data/korean-hate-speech/original/test/test_hate_no_label.csv"
+        "train": "data/korean-hate-speech/preprocessed/train/data_v1.csv",
+        "valid": "data/korean-hate-speech/preprocessed/dev/dev.csv",
+        "test": "data/korean-hate-speech/preprocessed/test/test.csv"
     }
 }

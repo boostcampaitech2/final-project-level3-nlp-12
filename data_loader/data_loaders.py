@@ -6,6 +6,8 @@ import torch
 from torch.utils.data import DataLoader
 from transformers import PreTrainedTokenizer
 from utils import Preprocess, preprocess
+from datasets import load_dataset
+
 
 LABEL_2_IDX = {
     "none": 0,
@@ -21,6 +23,7 @@ IDX_2_LABEL = {
 
 class KhsDataLoader(DataLoader):
     def __init__(self, tokenizer: PreTrainedTokenizer, max_length: int = None):
+        super().__init__()
         self.tokenizer = tokenizer
         self.max_length = max_length if max_length else self.tokenizer.model_max_length
 
@@ -130,18 +133,19 @@ class KhsDataset(Dataset):
         
 def load_data(data_path):
     df = pd.read_csv(data_path)
-    preprocessed_sents = preprocess(df.comments)
+    # preprocessed_sents = preprocess(df.comments)
+    sents = df.comments
     
     if 'test' in data_path:
         out_dataset = pd.DataFrame(
         {
-            'texts': preprocessed_sents,
+            'texts': sents,
         }
     )
     else:
         out_dataset = pd.DataFrame(
             {
-                'texts': preprocessed_sents,
+                'texts': sents,
                 'labels': df.label
             }
         )
