@@ -55,9 +55,9 @@
         "monitor": "max val/macro_f1",
         "early_stop": 2
     },
-    "data_dir": {
-        "train": "data/korean-hate-speech/preprocessed/train/data_v1.csv",
-        "valid": "data/korean-hate-speech/preprocessed/dev/dev.csv",
-        "test": "data/korean-hate-speech/preprocessed/test/test.csv"
+    "data_dir": "AI-it/korean-hate-speech",
+    "data_files": {
+        "train": "train_hate.csv",
+        "valid": "dev_hate.csv"
     }
 }
