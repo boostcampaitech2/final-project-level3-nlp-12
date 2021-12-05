@@ -47,11 +47,15 @@ def main(config):
         max_length=config['data_loader']['args']['max_length']
     )
     train_data_loader = dataloader.get_dataloader(
-        os.path.join(os.getcwd()[:-4], config['data_dir']['train']),
+        name='train',
+        data_dir=config['data_dir'], 
+        data_files=config['data_files'],
         batch_size=config['data_loader']['args']['batch_size']
     )
     valid_data_loader = dataloader.get_dataloader(
-        os.path.join(os.getcwd()[:-4], config['data_dir']['valid']),
+        name='valid',
+        data_dir=config['data_dir'], 
+        data_files=config['data_files'],
         batch_size=config['data_loader']['args']['batch_size']
     )
 
