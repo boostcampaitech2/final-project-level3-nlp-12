@@ -23,7 +23,6 @@ IDX_2_LABEL = {
 
 class KhsDataLoader(DataLoader):
     def __init__(self, tokenizer: PreTrainedTokenizer, max_length: int = None):
-        super().__init__()
         self.tokenizer = tokenizer
         self.max_length = max_length if max_length else self.tokenizer.model_max_length
 
@@ -74,39 +73,25 @@ class KhsDataLoader(DataLoader):
         
         return input_ids, token_type_ids, attention_mask
     
-    def get_dataloader(self, data_path, batch_size, **kwargs):
-        data = load_data(data_path)
+    def get_dataloader(self, name, data_dir, data_files, batch_size, **kwargs):
+        data_files = dict(data_files)
+        datasets = load_dataset(data_dir, data_files=data_files, use_auth_token=True)
+        dataset = get_preprocessed_data(datasets[name], name)
+        dataset = KhsDataset(dataset, name)
         
-        if 'test' in data_path:
-            dataset = KhsDataset(data, 'test')
-            return DataLoader(
-                dataset,
-                batch_size=batch_size,
-                shuffle=False,
-                collate_fn=self.test_collate_fn,
-                num_workers=4,
-                **kwargs
-            )
-        elif 'valid' in data_path:
-            dataset = KhsDataset(data, 'valid')
-            return DataLoader(
-                dataset,
-                batch_size=batch_size,
-                shuffle=False,
-                collate_fn=self.train_collate_fn,
-                num_workers=4,
-                **kwargs
-            )
+        if name == 'test':
+            collate_fn = self.test_collate_fn
         else:
-            dataset = KhsDataset(data, 'train')
-            return DataLoader(
-                dataset,
-                batch_size=batch_size,
-                shuffle=True,
-                collate_fn=self.train_collate_fn,
-                num_workers=8,
-                **kwargs
-            )
+            collate_fn = self.train_collate_fn
+
+        return DataLoader(
+            dataset,
+            batch_size=batch_size,
+            shuffle=False,
+            collate_fn=collate_fn,
+            num_workers=4,
+            **kwargs
+        )
         
         
 class KhsDataset(Dataset):
@@ -131,22 +116,20 @@ class KhsDataset(Dataset):
         return text
     
         
-def load_data(data_path):
-    df = pd.read_csv(data_path)
-    # preprocessed_sents = preprocess(df.comments)
-    sents = df.comments
-    
-    if 'test' in data_path:
-        out_dataset = pd.DataFrame(
-        {
-            'texts': sents,
-        }
-    )
-    else:
+def get_preprocessed_data(dataset, name):
+    if name == 'test':
+        preprocessed_sents = preprocess(dataset['comments'])
         out_dataset = pd.DataFrame(
             {
-                'texts': sents,
-                'labels': df.label
+                'texts': preprocessed_sents,
+            }
+        )
+    else:
+        preprocessed_sents = preprocess(dataset['comments'])
+        out_dataset = pd.DataFrame(
+            {
+                'texts': preprocessed_sents,
+                'labels': dataset['label']
             }
         )
     
