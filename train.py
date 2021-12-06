@@ -19,12 +19,6 @@ from datasets import load_dataset
 
 
 def seed_everything(seed):
-    """
-    fix random seeds for reproducibility.
-    Args:
-        seed (int):
-            seed number
-    """
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)  # if use multi-GPU
@@ -34,7 +28,7 @@ def seed_everything(seed):
     random.seed(seed)
 
 
-def main(config):
+def main(config): 
     seed_everything(42)
     wandb.init(project='final-project', entity='jadon')
 
