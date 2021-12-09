@@ -20,8 +20,7 @@ IDX_2_LABEL = {
 
 def main(config):
     # load model and tokenizer architecture
-    # model = torch.load(config['model']['type'])
-    model = torch.load('/opt/ml/final-project-level3-nlp-12/saved/best/beomi/beep-KcELECTRA-base-hate/best_model.pt')
+    model = torch.load(config['model']['type'])
     tokenizer = AutoTokenizer.from_pretrained(config['model']['args']['name'])
 
     # setup data_loader instances
@@ -30,9 +29,7 @@ def main(config):
         max_length=config['data_loader']['args']['max_length']
     )
     data_loader = data_loader.get_dataloader(
-        name='test',
-        data_dir=config['data_dir'], 
-        data_files=config['test_data_file'],
+        os.path.join(os.getcwd()[:-4], config['data_dir']['test']),
         batch_size=config['data_loader']['args']['batch_size']
     )
 
@@ -78,7 +75,7 @@ def main(config):
 
 if __name__ == '__main__':
     args = argparse.ArgumentParser(description='PyTorch Template')
-    args.add_argument('-c', '--config', default='config.json', type=str,
+    args.add_argument('-c', '--config', default=None, type=str,
                       help='config file path (default: None)')
     args.add_argument('-r', '--resume', default=None, type=str,
                       help='path to latest checkpoint (default: None)')

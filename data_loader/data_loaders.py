@@ -9,16 +9,8 @@ from utils import Preprocess, preprocess
 from datasets import load_dataset
 
 
-LABEL_2_IDX = {
-    "none": 0,
-    "offensive": 1,
-    "hate": 2
-}
-IDX_2_LABEL = {
-    0: "none",
-    1: "offensive",
-    2: "hate"
-}
+LABEL_2_IDX = {"none": 0, "offensive": 1, "hate": 2}
+IDX_2_LABEL = {0: "none", 1: "offensive", 2: "hate"}
 
 
 class KhsDataLoader(DataLoader):
@@ -43,13 +35,13 @@ class KhsDataLoader(DataLoader):
             return_token_type_ids=True,
             return_attention_mask=True,
         )  # input_ids, token_type_ids, attention_mask
-        
+
         input_ids = encoded_texts["input_ids"]
         token_type_ids = encoded_texts["token_type_ids"]
         attention_mask = encoded_texts["attention_mask"]
-        
+
         return input_ids, token_type_ids, attention_mask, torch.tensor(input_labels)
-    
+
     def test_collate_fn(self, input_examples):
         input_texts = []
         for input_example in input_examples:
@@ -66,20 +58,20 @@ class KhsDataLoader(DataLoader):
             return_token_type_ids=True,
             return_attention_mask=True,
         )  # input_ids, token_type_ids, attention_mask
-        
+
         input_ids = encoded_texts["input_ids"]
         token_type_ids = encoded_texts["token_type_ids"]
         attention_mask = encoded_texts["attention_mask"]
-        
+
         return input_ids, token_type_ids, attention_mask
-    
+
     def get_dataloader(self, name, data_dir, data_files, batch_size, **kwargs):
         data_files = dict(data_files)
         datasets = load_dataset(data_dir, data_files=data_files, use_auth_token=True)
         dataset = get_preprocessed_data(datasets[name], name)
         dataset = KhsDataset(dataset, name)
-        
-        if name == 'test':
+
+        if name == "test":
             collate_fn = self.test_collate_fn
         else:
             collate_fn = self.train_collate_fn
@@ -92,13 +84,13 @@ class KhsDataLoader(DataLoader):
             num_workers=4,
             **kwargs
         )
-        
-        
+
+
 class KhsDataset(Dataset):
-    def __init__(self, data, data_type='train'):
+    def __init__(self, data, data_type="train"):
         self.data_type = data_type
         self.texts = list(data.texts)
-        if self.data_type == 'train' or self.data_type == 'valid':
+        if self.data_type == "train" or self.data_type == "valid":
             self.labels = list(data.labels)
 
     def __len__(self):
@@ -106,31 +98,28 @@ class KhsDataset(Dataset):
 
     def __getitem__(self, index):
         text = self.texts[index]
-        
-        if self.data_type == 'train' or self.data_type == 'valid':
+
+        if self.data_type == "train" or self.data_type == "valid":
             label = self.labels[index]
             converted_label = LABEL_2_IDX[label]
-            
+
             return text, converted_label
-        
+
         return text
-    
-        
+
+
 def get_preprocessed_data(dataset, name):
-    if name == 'test':
-        preprocessed_sents = preprocess(dataset['comments'])
+    if name == "test":
+        preprocessed_sents = preprocess(dataset["comments"])
         out_dataset = pd.DataFrame(
             {
-                'texts': preprocessed_sents,
+                "texts": preprocessed_sents,
             }
         )
     else:
-        preprocessed_sents = preprocess(dataset['comments'])
+        preprocessed_sents = preprocess(dataset["comments"])
         out_dataset = pd.DataFrame(
-            {
-                'texts': preprocessed_sents,
-                'labels': dataset['label']
-            }
+            {"texts": preprocessed_sents, "labels": dataset["label"]}
         )
-    
+
     return out_dataset
