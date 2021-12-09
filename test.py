@@ -1,4 +1,5 @@
 import os
+from datasets.load import load_dataset
 import torch
 import argparse
 from tqdm import tqdm
@@ -9,6 +10,7 @@ import model.metric as module_metric
 import model.model as module_arch
 from transformers import AutoTokenizer
 from parse_config import ConfigParser
+from datasets import load_dataset
 
 IDX_2_LABEL = {
     0: "none",
@@ -65,10 +67,11 @@ def main(config):
             
             output_pred.extend(preds.detach().cpu().numpy())
             
-    df = pd.read_csv('/opt/ml/final-project-level3-nlp-12/data/korean-hate-speech/origin/test/test_hate_no_label.csv')
-    df['label'] = output_pred
-        
-    df.to_csv(
+    dataset = load_dataset(config['data_dir'], data_files=config['test_data_file'], use_auth_token=True)
+    test_df = pd.DataFrame()
+    test_df['comments'] = dataset['test']['comments']
+    test_df['label'] = output_pred
+    test_df.to_csv(
         'data/result.csv',
         index=None
     )
