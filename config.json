@@ -56,5 +56,8 @@
     "data_files": {
         "train": "train_hate.csv",
         "valid": "dev_hate.csv"
+    },
+    "test_data_file": {
+        "test": "test_hate_no_label.csv"
     }
 }
