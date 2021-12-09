@@ -42,13 +42,10 @@
     "trainer": {
         "epochs": 2,
 
-        "save_dir": "saved/",
-        "save_period": 1,
         "save": {
             "dir": "saved/",
-            "on_epoch": true,
-            "on_steps": false,
-            "steps": 200
+            "steps": 300,
+            "limits": 3
         },
         "verbosity": 2,
         
