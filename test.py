@@ -19,7 +19,7 @@ IDX_2_LABEL = {
 def main(config):
     # load model and tokenizer architecture
     # model = torch.load(config['model']['type'])
-    model = torch.load('saved/best/beep_kcELECTRA_base_hate/best_model.pt')
+    model = torch.load('/opt/ml/final-project-level3-nlp-12/saved/best/beomi/beep-KcELECTRA-base-hate/best_model.pt')
     tokenizer = AutoTokenizer.from_pretrained(config['model']['args']['name'])
 
     # setup data_loader instances
@@ -28,7 +28,9 @@ def main(config):
         max_length=config['data_loader']['args']['max_length']
     )
     data_loader = data_loader.get_dataloader(
-        os.path.join(os.getcwd()[:], config['data_dir']['test']),
+        name='test',
+        data_dir=config['data_dir'], 
+        data_files=config['test_data_file'],
         batch_size=config['data_loader']['args']['batch_size']
     )
 
@@ -59,13 +61,11 @@ def main(config):
             
             output_pred.extend(preds.detach().cpu().numpy())
             
-    df = pd.read_csv(
-        os.path.join(os.getcwd()[:], config['data_dir']['test'])
-    )
+    df = pd.read_csv('/opt/ml/final-project-level3-nlp-12/data/korean-hate-speech/origin/test/test_hate_no_label.csv')
     df['label'] = output_pred
         
     df.to_csv(
-        os.path.join(os.getcwd()[:], 'data/result.csv'),
+        'data/result.csv',
         index=None
     )
 

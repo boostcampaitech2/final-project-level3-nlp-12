@@ -30,3 +30,12 @@ class BeepKcElectraHateModel(BaseModel):
         
     def forward(self, inputs):
         return self.model(**inputs)
+
+class BeomiModel(BaseModel):
+    def __init__(self, name='beomi/beep-KcELECTRA-base-hate', num_classes=3):
+        super().__init__()
+        print(f'@@@@@@ Model Name: {name} @@@@@@@@')
+        self.model = AutoModelForSequenceClassification.from_pretrained(name, num_labels=num_classes)
+        
+    def forward(self, inputs):
+        return self.model(**inputs)

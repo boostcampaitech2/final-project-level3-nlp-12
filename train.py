@@ -102,6 +102,6 @@ if __name__ == '__main__':
                       help='path to latest checkpoint (default: None)')
     args.add_argument('-d', '--device', default=None, type=str,
                       help='indices of GPUs to enable (default: all)')
-
+                    
     config = ConfigParser.from_args(args)
     main(config)
