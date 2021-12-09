@@ -1,4 +1,5 @@
 import os
+from datasets.load import load_dataset
 import torch
 import argparse
 from tqdm import tqdm
@@ -9,6 +10,7 @@ import model.metric as module_metric
 import model.model as module_arch
 from transformers import AutoTokenizer
 from parse_config import ConfigParser
+from datasets import load_dataset
 
 IDX_2_LABEL = {
     0: "none",
@@ -53,11 +55,16 @@ def main(config):
             }
             outputs = model(inputs)
             
-            logits = outputs[0]
+            if isinstance(outputs, torch.Tensor):
+                logits = outputs
+            else:
+                logits = outputs[0]
+            
             _, preds = torch.max(logits, dim=1)
             
             output_pred.extend(preds.detach().cpu().numpy())
             
+<<<<<<< HEAD
     df = pd.read_csv(
         os.path.join(os.getcwd()[:-4], config['data_dir']['test'])
     )
@@ -65,6 +72,14 @@ def main(config):
         
     df.to_csv(
         os.path.join(os.getcwd()[:-4], 'data/result.csv'),
+=======
+    dataset = load_dataset(config['data_dir'], data_files=config['test_data_file'], use_auth_token=True)
+    test_df = pd.DataFrame()
+    test_df['comments'] = dataset['test']['comments']
+    test_df['label'] = output_pred
+    test_df.to_csv(
+        'data/result.csv',
+>>>>>>> 0b9b1b3... UPDATE: test.py to use huggingface dataset
         index=None
     )
 
