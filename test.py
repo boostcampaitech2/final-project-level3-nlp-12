@@ -53,7 +53,11 @@ def main(config):
             }
             outputs = model(inputs)
             
-            logits = outputs[0]
+            if isinstance(outputs, torch.Tensor):
+                logits = outputs
+            else:
+                logits = outputs[0]
+            
             _, preds = torch.max(logits, dim=1)
             
             output_pred.extend(preds.detach().cpu().numpy())
