@@ -60,6 +60,7 @@ class BaseTrainer:
 
         :param step: Current step number
         """
+        
         raise NotImplementedError
 
     def _evaluate_performance(self, log):
@@ -100,7 +101,7 @@ class BaseTrainer:
         if not os.path.exists(chk_pt_path):
             os.makedirs(chk_pt_path)
         # delete the oldest checkpoint not to exceed save limits
-        if len(os.listdir(save_path)) < self.save_limits:
+        if len(os.listdir(save_path)) > self.save_limits:
             shutil.rmtree(os.path.join(
                     save_path,
                     sorted(os.listdir(save_path),key = lambda x : (len(x), x))[0]
