@@ -72,17 +72,23 @@ class MetricTracker:
 
 def preprocess(sents):
     """
-    kcELECTRA-base preprocess procedure
+    kcELECTRA-base preprocess procedure + modification
     """
     preprocessed_sents = []
-    emojis = ''.join(emoji.UNICODE_EMOJI.keys())
-    pattern = re.compile(f'[^ .,?!/@$%~％·∼()\x00-\x7Fㄱ-힣{emojis}]+')
+    
+    emojis = set()
+    for k in emoji.UNICODE_EMOJI.keys():
+        emojis.update(emoji.UNICODE_EMOJI[k].keys())
+        
+    punc_bracket_pattern = re.compile(f'[\'\"\[\]\(\)]')
+    base_pattern = re.compile(f'[^.,?!/@$%~％·∼()\x00-\x7Fㄱ-힣{emojis}]+')
     url_pattern = re.compile(
-        r'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
+        r'(http|ftp|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
     )
     
     for sent in sents:
-        sent = pattern.sub(' ', sent)
+        sent = punc_bracket_pattern.sub(' ', sent)
+        sent = base_pattern.sub(' ', sent)
         sent = url_pattern.sub('', sent)
         sent = sent.strip()
         sent = repeat_normalize(sent, num_repeats=2)
