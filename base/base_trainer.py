@@ -60,6 +60,7 @@ class BaseTrainer:
 
         :param step: Current step number
         """
+        
         raise NotImplementedError
 
     def _evaluate_performance(self, log):
@@ -96,12 +97,16 @@ class BaseTrainer:
         save_path = f'{self.checkpoint_dir}models/{self.config["name"]}/'
         chk_pt_path = save_path + f"steps_{log['steps']}/"
         
-        # save model limits
-        if len(os.listdir(save_path)) == self.save_limits:
-            shutil.rmtree(os.path.join(save_path, min(os.listdir(save_path))))
         # make path if there isn't
         if not os.path.exists(chk_pt_path):
             os.makedirs(chk_pt_path)
+        # delete the oldest checkpoint not to exceed save limits
+        if len(os.listdir(save_path)) > self.save_limits:
+            shutil.rmtree(os.path.join(
+                    save_path,
+                    sorted(os.listdir(save_path),key = lambda x : (len(x), x))[0]
+                )
+            )
         
         self.logger.info("Saving checkpoint: {} ...".format(chk_pt_path))    
         torch.save(self.model, os.path.join(chk_pt_path, "model.pt"))
