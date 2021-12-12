@@ -8,7 +8,6 @@ from transformers import PreTrainedTokenizer
 from utils import Preprocess, preprocess
 from datasets import load_dataset
 
-
 LABEL_2_IDX = {"none": 0, "offensive": 1, "hate": 2}
 IDX_2_LABEL = {0: "none", 1: "offensive", 2: "hate"}
 
