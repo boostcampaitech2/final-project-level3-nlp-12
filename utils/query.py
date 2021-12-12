@@ -165,7 +165,8 @@ class QueryMLP(nn.Module):
         assert not multi_query_net or product_quantization or heads >= 2
         assert sizes[0] == input_dim
         assert sizes[-1] == (k_dim // 2) if multi_query_net else (heads * k_dim)
-        assert self.grouped_conv is False or len(sizes) > 2
+        # caution revision
+        assert self.grouped_conv is False or len(sizes) >= 2
 
         # number of required MLPs
         self.groups = (2 * heads) if multi_query_net else 1

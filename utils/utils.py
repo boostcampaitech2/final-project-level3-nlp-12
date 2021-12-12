@@ -75,10 +75,12 @@ def swig_ptr_from_FloatTensor(x):
     return faiss.cast_integer_to_float_ptr(x.storage().data_ptr() + x.storage_offset() * 4)
 
 
-def swig_ptr_from_LongTensor(x):
+def swig_ptr_from_IndicesTensor(x):
+    """ gets a Faiss SWIG pointer from a pytorch tensor (on CPU or GPU) """
     assert x.is_contiguous()
     assert x.dtype == torch.int64, 'dtype=%s' % x.dtype
-    return faiss.cast_integer_to_long_ptr(x.storage().data_ptr() + x.storage_offset() * 8)
+    return faiss.cast_integer_to_idx_t_ptr(
+        x.storage().data_ptr() + x.storage_offset() * 8)
 
 
 def get_knn_pytorch(a, b, k, distance='dot_product'):
@@ -141,14 +143,32 @@ def get_knn_faiss(xb, xq, k, distance='dot_product'):
     I = torch.empty(nq, k, device=xb.device, dtype=torch.int64)
 
     D_ptr = swig_ptr_from_FloatTensor(D)
-    I_ptr = swig_ptr_from_LongTensor(I)
+    I_ptr = swig_ptr_from_IndicesTensor(I)
 
-    faiss.bruteForceKnn(
-        FAISS_RES, metric,
-        xb_ptr, nb,
-        xq_ptr, nq,
-        d1, k, D_ptr, I_ptr
-    )
+    args = faiss.GpuDistanceParams()
+    args.metric = metric
+    args.k = k
+    args.dims = d1
+    args.vectors = xb_ptr
+    args.vectorsRowMajor = False
+    args.vectorType = faiss.DistanceDataType_F32
+    args.numVectors = nb
+    args.queries = xq_ptr
+    args.queriesRowMajor = False
+    args.queryType = faiss.DistanceDataType_F32
+    args.numQueries = nq
+    args.outDistances = D_ptr
+    args.outIndices = I_ptr
+    args.outIndicesType = faiss.IndicesDataType_I64
+
+    # faiss.bruteForceKnn(
+    #     FAISS_RES, metric,
+    #     xb_ptr, True, nb,
+    #     xq_ptr, True, nq,
+    #     d1, k, D_ptr, I_ptr
+    # )
+
+    faiss.bfKnn(FAISS_RES, args)
 
     return D, I
 

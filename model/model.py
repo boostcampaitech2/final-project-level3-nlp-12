@@ -31,7 +31,7 @@ class BeepKcElectraHateModel(BaseModel):
     def __init__(self, name="beomi/beep-KcELECTRA-base-hate", num_classes=3):
         super().__init__()
         self.model = AutoModelForSequenceClassification.from_pretrained(name, num_labels=num_classes)
-        
+
     def forward(self, inputs):
         return self.model(**inputs)
 
@@ -39,17 +39,14 @@ class BeepKcElectraResMModel(BaseModel):
     def __init__(self, name="beomi/beep-KcELECTRA-base-hate", num_classes=3):
         super().__init__()
         self.model = AutoModelForSequenceClassification.from_pretrained(name, num_labels=num_classes)
-
-        # self.embeddings = self.model.electra.embeddings
         self.model.electra.encoder.layer[3] = BeepKcElectraResMLayer(self.model, 3)
         self.model.electra.encoder.layer[7] = BeepKcElectraResMLayer(self.model, 7)
-        # self.encoders = self.model.electra.encoder
-        # self.classifier = self.model.classifier
+
+        # deletion top layer
+        del self.model.electra.encoder.layer[11]
+        # del self.model.electra.encoder.layer[10]
 
     def forward(self, inputs):
-        # embedding_output = self.embeddings(**inputs)
-        # encoder_outputs = self.encoders(embedding_output)
-        # return self.classifier(encoder_outputs)
         return self.model(**inputs)
 
 class BeepKcElectraResMLayer(nn.Module):
@@ -100,10 +97,11 @@ class ResM(nn.Module):
 
         params = read_json('./pkm_config.json')
         params = AttrDict(params)
-        params.mem_size = 128 * 128
+        params.mem_size = 512 * 512
         params.n_indices = params.mem_size
         params.mem_product_quantization = True
         params.mem_sparse = False
+        params.mem_shuffle_query = False
         self.pkm = HashingMemoryProduct(3072, 768, params) # input_dim, output_dim, params
 
     def forward(self, hidden_states, input_tensor):

@@ -102,6 +102,11 @@ class HashingMemory(nn.Module):
 
             # layer sizes / number of features
             l_sizes = list(params.mem_query_layer_sizes)
+
+            # caution revision
+            l_sizes[0] = 0
+            l_sizes[-1] = 0
+            del l_sizes[1]
             assert len(l_sizes) >= 2 and l_sizes[0] == l_sizes[-1] == 0
             l_sizes[0] = self.input_dim
             l_sizes[-1] = (self.k_dim // 2) if self.multi_query_net else (self.heads * self.k_dim)
@@ -114,6 +119,7 @@ class HashingMemory(nn.Module):
                     bias=params.mem_query_bias, batchnorm=params.mem_query_batchnorm,
                     grouped_conv=params.mem_grouped_conv
                 )
+            # caution ffn
             else:
                 assert params.mem_query_kernel_sizes == ''
                 assert not params.mem_query_residual
@@ -588,12 +594,12 @@ class HashingMemoryProduct(HashingMemory):
         with torch.no_grad():
 
             # compute indices with associated scores
-            # scores1, indices1 = get_knn_faiss(keys1.float(), q1.float(), knn, distance='dot_product')  # (bs, knn) ** 2
-            # scores2, indices2 = get_knn_faiss(keys2.float(), q2.float(), knn, distance='dot_product')  # (bs, knn) ** 2
+            scores1, indices1 = get_knn_faiss(keys1.float(), q1.float(), knn, distance='dot_product')  # (bs, knn) ** 2
+            scores2, indices2 = get_knn_faiss(keys2.float(), q2.float(), knn, distance='dot_product')  # (bs, knn) ** 2
 
-            # pytorch
-            scores1, indices1 = get_knn_pytorch(keys2.float(), q2.float(), knn, distance='dot_product')  # (bs, knn) ** 2
-            scores2, indices2 = get_knn_pytorch(keys2.float(), q2.float(), knn, distance='dot_product')  # (bs, knn) ** 2
+            # caution pytorch or faiss or annoy
+            # scores1, indices1 = get_knn_pytorch(keys1.float(), q1.float(), knn, distance='dot_product')  # (bs, knn) ** 2
+            # scores2, indices2 = get_knn_pytorch(keys2.float(), q2.float(), knn, distance='dot_product')  # (bs, knn) ** 2
 
             # cartesian product on best candidate keys
             concat_scores = cartesian_product(scores1, scores2)                                         # (bs, knn ** 2, 2)
