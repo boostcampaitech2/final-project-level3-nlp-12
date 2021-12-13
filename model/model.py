@@ -101,6 +101,7 @@ class ResM(nn.Module):
         # params.mem_size = 128 * 128
         params.n_indices = params.mem_size
         params.mem_product_quantization = True
+        params.mem_sparse = False
         self.pkm = HashingMemoryProduct(3072, 768, params) # input_dim, output_dim, params
 
     def forward(self, hidden_states, input_tensor):

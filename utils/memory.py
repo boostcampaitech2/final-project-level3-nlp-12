@@ -224,8 +224,8 @@ class HashingMemory(nn.Module):
             self.last_indices = indices.view(bs, self.heads, self.knn).detach().cpu()
             self.last_scores = scores.view(bs, self.heads, self.knn).detach().cpu().float()
 
-        print('================== OUTPUT SHAPE OF PKM ==================')
-        print(output.shape)
+        # print('================== OUTPUT SHAPE OF PKM ==================')
+        # print(output.shape)
 
         return output
 
