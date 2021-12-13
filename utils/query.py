@@ -1,8 +1,7 @@
 import torch
+
 from torch import nn
-
 from .utils import get_slices
-
 
 def mlp(sizes, bias=True, batchnorm=True, groups=1):
     """

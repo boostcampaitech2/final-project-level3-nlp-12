@@ -161,15 +161,7 @@ def get_knn_faiss(xb, xq, k, distance='dot_product'):
     args.outIndices = I_ptr
     args.outIndicesType = faiss.IndicesDataType_I64
 
-    # faiss.bruteForceKnn(
-    #     FAISS_RES, metric,
-    #     xb_ptr, True, nb,
-    #     xq_ptr, True, nq,
-    #     d1, k, D_ptr, I_ptr
-    # )
-
     faiss.bfKnn(FAISS_RES, args)
-
     return D, I
 
 

@@ -97,11 +97,10 @@ class ResM(nn.Module):
 
         params = read_json('./pkm_config.json')
         params = AttrDict(params)
-        params.mem_size = 512 * 512
+        params.mem_size = 768 * 768
+        # params.mem_size = 128 * 128
         params.n_indices = params.mem_size
         params.mem_product_quantization = True
-        params.mem_sparse = False
-        params.mem_shuffle_query = False
         self.pkm = HashingMemoryProduct(3072, 768, params) # input_dim, output_dim, params
 
     def forward(self, hidden_states, input_tensor):
