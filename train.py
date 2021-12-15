@@ -35,7 +35,7 @@ def seed_everything(seed):
 
 def main(config):
     seed_everything(42)
-    wandb.init(project='#TODO', entity='#TODO')
+    wandb.init(project='#TODO', entity='#TODO', config=config)
 
     # build model architecture and tokenizer
     model = config.init_obj('model', module_arch)
