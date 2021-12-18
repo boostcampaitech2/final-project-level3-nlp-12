@@ -2,9 +2,9 @@ from pandas import read_csv
 from datasets import load_dataset
 
 
-DATA_PATH = 'AI-it/korean-hate-speech'
+DATA_PATH = 'AI-it/khs_service_test'
 DATA_FILES = {
-    "data": "unlabeled_data.csv"
+    "data": "test_data_ver2.csv"
 }
 
 def load_data():
