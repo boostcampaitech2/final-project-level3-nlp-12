@@ -3,7 +3,7 @@
     "n_gpu": 1,
 
     "model": {
-        "type": "BeepKcElectraResMModel",
+        "type": "BeepKcElectraHateModel",
         "args": {
             "name": "beomi/beep-KcELECTRA-base-hate",
             "num_classes": 3
@@ -52,7 +52,7 @@
         "monitor": "max val/macro_f1",
         "early_stop": 2
     },
-    "data_dir": "../data",
+    "data_dir": "AI-it/korean-hate-speech",
     "data_files": {
         "train": "train_hate.csv",
         "valid": "dev_hate.csv"
