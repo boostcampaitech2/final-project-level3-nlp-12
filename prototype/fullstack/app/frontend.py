@@ -15,7 +15,7 @@ def main():
     keyword = st.text_input('Keyword you want to collect!!')
     if keyword:
         st.write('Classifying...')
-        response = requests.get('http://localhost:8000/inference/' + keyword)
+        response = requests.get('http://35.185.204.191/inference/' + keyword)
         st.write(response.json())
 
 
