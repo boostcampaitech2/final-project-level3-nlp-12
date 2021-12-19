@@ -9,8 +9,9 @@ DATA_FILES = {
 
 def load_data():
     dataset = load_dataset(DATA_PATH, data_files=DATA_FILES, use_auth_token=True)
+
     return dataset
-    
+
 
 def retrieve_comments(keyword: str, dataset) -> list:
     """Retrieve comments correspond to keyword from unlabeled comments.txt
@@ -37,5 +38,5 @@ def retrieve_comments(keyword: str, dataset) -> list:
 
 if __name__ == '__main__':
     result = retrieve_comments('전현무')
-    
-    
+
+
