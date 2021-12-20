@@ -105,8 +105,11 @@ data/
 input/
 saved/
 datasets/
+wandb/
+jh_test/
 
 # editor, os cache directory
 .vscode/
 .idea/
 __MACOSX/
+*.ipynb
