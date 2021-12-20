@@ -9,6 +9,15 @@ from soynlp.normalizer import repeat_normalize
 
 import torch
 
+def make_samples(results):
+    sample_results = []
+    for result in results[:5]:
+        sample_results.append({
+            "comment": result['comment'],
+            "label": result['label']
+        })
+    return sample_results
+
 def ensure_dir(dirname):
     dirname = Path(dirname)
     if not dirname.is_dir():

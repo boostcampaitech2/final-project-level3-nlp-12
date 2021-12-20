@@ -1,3 +1,4 @@
+from torch._C import TracingState
 from transformers import pipeline, AutoTokenizer
 import torch
 from utils.util import read_json
@@ -8,7 +9,7 @@ import time
 
 def main(config):
     device = 0 if torch.cuda.is_available() else -1
-
+    print(transformers.__version__)
     model_path = config.model_path
     config_path = config.config_path
 
