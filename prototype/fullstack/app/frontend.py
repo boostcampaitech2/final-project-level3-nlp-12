@@ -15,7 +15,7 @@ def main():
     keyword = st.text_input('Keyword you want to collect!!')
     if keyword:
         with st.spinner('Collecting Evidence...'):
-            response = requests.get('http://localhost:8000/get_sample/' + keyword)
+            response = requests.get('http://49.50.174.246:2227/get_sample/' + keyword)
         st.success('Done!')
         
         st.markdown("<h2 style='text-align: center'>Report</h1>", unsafe_allow_html=True)

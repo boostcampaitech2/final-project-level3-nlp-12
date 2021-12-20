@@ -8,9 +8,9 @@ import joblib
 def load_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    nh_model = torch.load('/Users/yangjaeug/Desktop/GitHub/Product-Serving/practice/03-streamlit-fastapi/app/model/nh_model.pt', map_location=device) ## 경로 맞게!
+    nh_model = torch.load('/opt/ml/final-project-level3-nlp-12/prototype/fullstack/app/model/nh_model.pt', map_location=device) ## 경로 맞게!
 
-    with open('/Users/yangjaeug/Desktop/GitHub/Product-Serving/practice/03-streamlit-fastapi/app/model/nh_classifier.pkl', 'rb') as f: ## 경로 맞게!
+    with open('/opt/ml/final-project-level3-nlp-12/prototype/fullstack/app/model/nh_classifier.pkl', 'rb') as f: ## 경로 맞게!
         nh_classifier = joblib.load(f)
 
     nh_model.to(device)

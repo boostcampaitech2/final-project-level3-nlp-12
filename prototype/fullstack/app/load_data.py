@@ -25,7 +25,7 @@ torch.backends.cudnn.benchmark = True  # type: ignore
 
 
 def load_data():
-    dataset = pd.read_csv('/Users/yangjaeug/Desktop/GitHub/Product-Serving/practice/03-streamlit-fastapi/app/data/service/test_data_ver2.csv', low_memory=False)
+    dataset = pd.read_csv('/opt/ml/final-project-level3-nlp-12/prototype/fullstack/app/data/service/test_data_ver2.csv', low_memory=False)
     dataset['comment'] = preprocess(dataset['comment'])
     dataset = dataset.to_dict('records')
     return dataset
