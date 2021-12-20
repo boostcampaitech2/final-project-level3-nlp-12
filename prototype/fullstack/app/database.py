@@ -16,7 +16,6 @@ def insert2db(keyword, results, collection):
                 'user_id': res['user_id'],
                 'comment': res['comment'],
                 "label": res['label'],
-                "score": res['score'],
                 'site_name': res['site_name'],
                 'site_url': res['site_url'],
                 'commented_at': res['commented_at']
