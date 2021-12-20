@@ -2,9 +2,9 @@ from pandas import read_csv
 from datasets import load_dataset
 
 
-DATA_PATH = 'AI-it/korean-hate-speech'
+DATA_PATH = 'AI-it/khs_service_test'
 DATA_FILES = {
-    "data": "unlabeled_data.csv"
+    "data": "test_data_ver2.csv"
 }
 
 def load_data():
@@ -24,13 +24,18 @@ def retrieve_comments(keyword: str, dataset) -> list:
     list of unlabeled comments contain keyword
     """
     result = []
-    for comment in dataset['data']['comment']:
-        if type(comment) != str:
+    for data in dataset['data']:
+        if type(data['comment']) != str:
             continue
-        elif keyword in comment:
-            result.append(comment)
-        elif keyword[1:] in comment:
-            result.append(comment)
+        if len(keyword) == 3:
+            '''3글자 이름이 들어왔을경우, e.g. 손흥민, 흥민 둘 다 검사'''
+            if keyword in data['comment']:
+                result.append(data)
+            elif keyword[1:] in data['comment']:
+                result.append(data)
+        else:
+            if keyword in data['comment']:
+                result.append(data)
 
     return result
 
