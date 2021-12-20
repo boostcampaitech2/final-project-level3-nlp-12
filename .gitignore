@@ -112,4 +112,6 @@ jh_test/
 .vscode/
 .idea/
 __MACOSX/
+*.pt
+*.pkl
 *.ipynb

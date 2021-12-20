@@ -1,55 +1,57 @@
 from transformers import AutoTokenizer, pipeline
 import torch
-# import 01-streamlit as st
-from utils import read_json
+from tqdm import tqdm
+from load_data import NhDataloader
+import joblib
 
 
-# @st.cache(allow_output_mutation=True)
-def get_pipeline():
-    device: int = 0 if torch.cuda.is_available() else -1
+def load_model():
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model_path: str = '/Users/yangjaeug/Desktop/GitHub/Product-Serving/assets/comments_task/model.pt'
-    config_path: str = '/Users/yangjaeug/Desktop/GitHub/Product-Serving/practice/03-streamlit-fastapi/app/config.json'
+    nh_model = torch.load('/opt/ml/final-project-level3-nlp-12/prototype/fullstack/app/model/nh_model.pt', map_location=device) ## 경로 맞게!
 
-    model = torch.load(model_path, map_location=torch.device('cpu'))
-    model_config = read_json(config_path)
+    with open('/opt/ml/final-project-level3-nlp-12/prototype/fullstack/app/model/nh_classifier.pkl', 'rb') as f: ## 경로 맞게!
+        nh_classifier = joblib.load(f)
 
-    tokenizer = AutoTokenizer.from_pretrained('beomi/KcELECTRA-base')
+    nh_model.to(device)
+    nh_model.eval()
+    
+    return nh_model, nh_classifier, 
 
-    pipe = pipeline(
-        task="text-classification",
-        config=model_config,
-        model=model.model,
-        tokenizer=tokenizer,
-        device=device
+def load_dataloader(data):
+    nh_tokenizer = AutoTokenizer.from_pretrained('beomi/beep-KcELECTRA-base-hate')
+    
+    nh_dataloader = NhDataloader(
+        nh_tokenizer,
+        max_length=64
     )
+    nh_inf_dataloader = nh_dataloader.get_dataloader(
+        data,
+        batch_size=128
+    )
+    return nh_inf_dataloader
     
-    return pipe
+def inference(nh_model, nh_classifier, nh_inf_dataloader):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    preds = [] # 0: none, 1: hate ----df['label'] = preds
 
+    with torch.no_grad():
+        for _, data in enumerate(tqdm(nh_inf_dataloader, desc=f'Inference ')):
+            encoded_anc_texts = data
 
-def inference(data, pipe):
-    results = []
+            nh_encoded_texts = {
+                "input_ids": encoded_anc_texts['input_ids'].to(device),
+                "attention_mask": encoded_anc_texts['attention_mask'].to(device),
+                "token_type_ids": encoded_anc_texts['token_type_ids'].to(device)
+            }
+            
+            nh_outputs = nh_model(**nh_encoded_texts)
+
+            nh_logit = nh_outputs.last_hidden_state[:, 0, :].detach().cpu().numpy()
+            nh_logit = nh_logit.squeeze()
+            
+            pred = nh_classifier.predict(nh_logit)
+            
+            preds.extend(pred)
     
-    for d in data:
-        try:
-            output = pipe(d['comment'])
-        except:
-            continue
-    
-        if output[0]['label'] == 'none':
-            continue
-    
-        else:
-            results.append(
-                {
-                    'user_id': d['user_id'],
-                    'comment': d['comment'],
-                    'label': output[0]['label'],
-                    'score': output[0]['score'],
-                    'site_name': d['site_name'],
-                    'site_url': d['site_url'],
-                    'commented_at': d['commented_at']
-                }
-            )
-    
-    return results
+    return preds
