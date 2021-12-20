@@ -25,10 +25,8 @@ torch.backends.cudnn.benchmark = True  # type: ignore
 
 
 def load_data():
-    dataset = pd.read_csv('/opt/ml/final-project-level3-nlp-12/prototype/fullstack/app/data/service/test_data_ver2.csv', low_memory=False)
-    dataset['comment'] = preprocess(dataset['comment'])
-    dataset = dataset.to_dict('records')
-    return dataset
+    dataset = load_dataset('AI-it/khs_service_test', data_files={'data':'test_data_ver2.csv'}, use_auth_token=True)
+    return dataset['data']
 
 def retrieve_comments(keyword: str, dataset) -> list:
     result = []
