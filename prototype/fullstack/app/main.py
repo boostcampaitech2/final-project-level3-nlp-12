@@ -32,7 +32,7 @@ def inference(keyword):
     comments = retrieve_comments(keyword, dataset)
 
     for comment in tqdm(comments):
-        output = pipe(preprocess(comment))
+        output = pipe(comment)
 
         if output[0]["label"] == "none":
             continue
