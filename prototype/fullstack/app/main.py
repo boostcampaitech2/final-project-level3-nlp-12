@@ -5,7 +5,7 @@ import uvicorn
 from predict import get_pipeline
 from load_data import load_data, retrieve_comments
 from tqdm import tqdm
-from wordcloud import WordCloud
+from wordcloud import WordCloud, STOPWORDS
 from pydantic import BaseModel
 from io import BytesIO
 from utils import *
@@ -19,7 +19,7 @@ app.router.redirect_slashes = False
 
 class Data(BaseModel):
     comment: str
-
+    keyword: str
 
 @app.get("/")
 def hello_world():
@@ -52,9 +52,15 @@ def inference(keyword):
 @app.post("/wordcloud/", description="wordcloud를 생성합니다.")
 def wordcloud(json: Data):
     json_compatible_item_data = jsonable_encoder(json)
+
+    stopwords = set(STOPWORDS)
+    stopwords.add(json_compatible_item_data['keyword'])
+    stopwords.add(json_compatible_item_data['keyword']+'는')
+    stopwords.add(json_compatible_item_data['keyword']+'가')
+    stopwords.add(json_compatible_item_data['keyword']+'도')
     word_cloud = (
         WordCloud(
-            font_path="MALGUN.TTF", background_color="white", width=500, height=500
+            font_path="MALGUN.TTF", background_color="white", width=500, height=500, stopwords=stopwords
         )
         .generate(json_compatible_item_data["comment"])
         .to_image()

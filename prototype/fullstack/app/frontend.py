@@ -16,11 +16,6 @@ st.title('Malicious Comments Collecting Service')
 
 
 def main():
-    # my_bar = st.progress(0)
-    # for percent_complete in range(100):
-    #     time.sleep(0.05)
-    #     my_bar.progress(percent_complete + 1)
-
     keyword = st.text_input('Keyword you want to collect!!')
     if keyword:
 
@@ -42,13 +37,12 @@ def main():
 
         col1, col2 = st.columns(2)
 
-        st.write(response.content)
-
         jsonfile = response.json()
         with col1:
             for i, res in enumerate(response.json()[:5]):
                 st.subheader(f'Evidence:{i+1}')
-                st.write(res)
+                st.markdown("comment: "+res["comment"])
+                #st.write(res)
 
             with st.expander("Detail Information"):
                 df = pd.DataFrame(jsonfile)
@@ -58,7 +52,7 @@ def main():
             # wordcloud
             st.subheader('Word Cloud')
             newtext = json_to_text(jsonfile)
-            response = requests.post('http://localhost:8000/wordcloud/', json = {'comment': newtext})
+            response = requests.post('http://localhost:8000/wordcloud/', json = {'comment': newtext, 'keyword': keyword})
             #response = requests.post('http://localhost:8000/wordcloud/', data = newtext)
 
             image = Image.open(BytesIO(response.content))
