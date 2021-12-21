@@ -39,7 +39,7 @@ def main(config):
 
     # build model architecture and tokenizer
     model = config.init_obj('model', module_arch)
-    tokenizer = AutoTokenizer.from_pretrained(config['model']['args']['name'])
+    tokenizer = AutoTokenizer.from_pretrained(config['tokenizer']['type'])
     
     # build train and valid dataloader
     dataloader = KhsDataLoader(
@@ -48,14 +48,14 @@ def main(config):
     )
     train_data_loader = dataloader.get_dataloader(
         name='train',
-        data_dir=config['data_dir'], 
-        data_files=config['data_files'],
+        data_dir=config['data_loader']['args']['data_dir'], 
+        data_files=config['data_loader']['data_files'],
         batch_size=config['data_loader']['args']['batch_size']
     )
     valid_data_loader = dataloader.get_dataloader(
         name='valid',
-        data_dir=config['data_dir'], 
-        data_files=config['data_files'],
+        data_dir=config['data_loader']['args']['data_dir'], 
+        data_files=config['data_loader']['data_files'],
         batch_size=config['data_loader']['args']['batch_size']
     )
 

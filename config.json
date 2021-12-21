@@ -9,15 +9,25 @@
             "num_classes": 3
         }
     },
+    "tokenizer": {
+        "type": "tokenizer/"
+    },
     "data_loader": {
         "type": "MnistDataLoader",
         "args":{
-            "data_dir": "data/",
+            "data_dir": "AI-it/korean-hate-speech",
             "batch_size": 16,
             "max_length": 64,
             "shuffle": true,
             "validation_split": 0.1,
             "num_workers": 2
+        },
+        "data_files": {
+            "train": "train_hate.csv",
+            "valid": "dev_hate.csv"
+        },
+        "test_data_file": {
+            "test": "test_hate_no_label.csv"
         }
     },
     "optimizer": {
@@ -51,13 +61,5 @@
         
         "monitor": "max val/macro_f1",
         "early_stop": 2
-    },
-    "data_dir": "AI-it/korean-hate-speech",
-    "data_files": {
-        "train": "train_hate.csv",
-        "valid": "dev_hate.csv"
-    },
-    "test_data_file": {
-        "test": "test_hate_no_label.csv"
     }
 }
