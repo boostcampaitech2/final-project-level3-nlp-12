@@ -8,27 +8,49 @@ from pathlib import Path
 from itertools import repeat
 from collections import OrderedDict
 from soynlp.normalizer import repeat_normalize
+import io
+import numpy as np
+from PIL import Image
 
+import albumentations
+import albumentations.pytorch
+import torch
+
+def transform_image(image_bytes: bytes) -> torch.Tensor:
+    transform = albumentations.Compose([
+            albumentations.Resize(height=512, width=384),
+            albumentations.Normalize(mean=(0.5, 0.5, 0.5),
+                                     std=(0.2, 0.2, 0.2)),
+            albumentations.pytorch.transforms.ToTensorV2()
+        ])
+    image = Image.open(io.BytesIO(image_bytes))
+    image = image.convert('RGB')
+    image_array = np.array(image)
+    return transform(image=image_array)['image'].unsqueeze(0)
 
 def ensure_dir(dirname):
     dirname = Path(dirname)
     if not dirname.is_dir():
         dirname.mkdir(parents=True, exist_ok=False)
 
+
 def read_json(fname):
     fname = Path(fname)
-    with fname.open('rt') as handle:
+    with fname.open("rt") as handle:
         return json.load(handle, object_hook=OrderedDict)
+
 
 def write_json(content, fname):
     fname = Path(fname)
-    with fname.open('wt') as handle:
+    with fname.open("wt") as handle:
         json.dump(content, handle, indent=4, sort_keys=False)
 
+
 def inf_loop(data_loader):
-    ''' wrapper function for endless data loader. '''
+    """wrapper function for endless data loader."""
     for loader in repeat(data_loader):
         yield from loader
+
 
 def prepare_device(n_gpu_use):
     """
@@ -36,21 +58,25 @@ def prepare_device(n_gpu_use):
     """
     n_gpu = torch.cuda.device_count()
     if n_gpu_use > 0 and n_gpu == 0:
-        print("Warning: There\'s no GPU available on this machine,"
-              "training will be performed on CPU.")
+        print(
+            "Warning: There's no GPU available on this machine,"
+            "training will be performed on CPU."
+        )
         n_gpu_use = 0
     if n_gpu_use > n_gpu:
-        print(f"Warning: The number of GPU\'s configured to use is {n_gpu_use}, but only {n_gpu} are "
-              "available on this machine.")
+        print(
+            f"Warning: The number of GPU's configured to use is {n_gpu_use}, but only {n_gpu} are "
+            "available on this machine."
+        )
         n_gpu_use = n_gpu
-    device = torch.device('cuda:0' if n_gpu_use > 0 else 'cpu')
+    device = torch.device("cuda:0" if n_gpu_use > 0 else "cpu")
     list_ids = list(range(n_gpu_use))
     return device, list_ids
 
 
 class MetricTracker:
     def __init__(self, *keys):
-        self._data = pd.DataFrame(index=keys, columns=['total', 'counts', 'average'])
+        self._data = pd.DataFrame(index=keys, columns=["total", "counts", "average"])
         self.reset()
 
     def reset(self):
@@ -69,7 +95,6 @@ class MetricTracker:
         return dict(self._data.average)
 
 
-
 def preprocess(sents):
     """
     kcELECTRA-base preprocess procedure + modification
@@ -85,7 +110,7 @@ def preprocess(sents):
     url_pattern = re.compile(
         r'(http|ftp|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
     )
-    
+
     for sent in sents:
         sent = punc_bracket_pattern.sub(' ', sent)
         sent = base_pattern.sub(' ', sent)
@@ -93,20 +118,20 @@ def preprocess(sents):
         sent = sent.strip()
         sent = repeat_normalize(sent, num_repeats=2)
         preprocessed_sents.append(sent)
-            
+
     return preprocessed_sents
 
 
-class Preprocess():
-    '''A class for preprocessing contexts from train and wikipedia
+class Preprocess:
+    """A class for preprocessing contexts from train and wikipedia
     Args:
         sents (list): context list
         langs (list): language list should be removed from sentence
-    '''
+    """
 
     PERMIT_REMOVE_LANGS = [
-        'arabic',
-        'russian',
+        "arabic",
+        "russian",
     ]
 
     def __init__(self, sents: list):
@@ -123,7 +148,7 @@ class Preprocess():
         self.remove_useless_char()
         self.remove_linesign()
         self.remove_repeated_spacing()
-        
+
         return self.sents
 
     def remove_hashtag(self):
@@ -166,11 +191,45 @@ class Preprocess():
         """
         A function for removing useless punctuation
         """
-        punct_mapping = {"‘": "'", "₹": "e", "´": "'", "°": "", "€": "e", "™": "tm", "√": " sqrt ", "×": "x", "²": "2",
-                         "—": "-", "–": "-", "’": "'", "_": "-", "`": "'", '“': '"', '”': '"', '“': '"', "£": "e",
-                         '∞': 'infinity', 'θ': 'theta', '÷': '/', 'α': 'alpha', '•': '.', 'à': 'a', '−': '-',
-                         'β': 'beta', '∅': '', '³': '3', 'π': 'pi', 'ㅂㅅ': '병신', 'ㄲㅈ': '꺼져', 'ㅂㄷ': '부들', 'ㅆㄹㄱ': '쓰레기', 'ㅆㅂ': '씨발',
-                         'ㅈㅅ': '죄송', 'ㅈㄹ': '지랄', 'ㅈㄴ': '정말'}
+        punct_mapping = {
+            "‘": "'",
+            "₹": "e",
+            "´": "'",
+            "°": "",
+            "€": "e",
+            "™": "tm",
+            "√": " sqrt ",
+            "×": "x",
+            "²": "2",
+            "—": "-",
+            "–": "-",
+            "’": "'",
+            "_": "-",
+            "`": "'",
+            "“": '"',
+            "”": '"',
+            "“": '"',
+            "£": "e",
+            "∞": "infinity",
+            "θ": "theta",
+            "÷": "/",
+            "α": "alpha",
+            "•": ".",
+            "à": "a",
+            "−": "-",
+            "β": "beta",
+            "∅": "",
+            "³": "3",
+            "π": "pi",
+            "ㅂㅅ": "병신",
+            "ㄲㅈ": "꺼져",
+            "ㅂㄷ": "부들",
+            "ㅆㄹㄱ": "쓰레기",
+            "ㅆㅂ": "씨발",
+            "ㅈㅅ": "죄송",
+            "ㅈㄹ": "지랄",
+            "ㅈㄴ": "정말",
+        }
 
         preprocessed_sents = []
         for sent in self.sents:
@@ -180,11 +239,11 @@ class Preprocess():
             if sent:
                 preprocessed_sents.append(sent)
         self.sents = preprocessed_sents
-        
+
     def remove_useless_char(self):
         preprocessed_sents = []
-        re_obj = re.compile('[^가-힣a-z0-9\x20]+')
-        
+        re_obj = re.compile("[^가-힣a-z0-9\x20]+")
+
         for sent in self.sents:
             temp = re_obj.findall(sent)
             if temp != []:
@@ -193,9 +252,9 @@ class Preprocess():
             sent = sent.strip()
             if sent:
                 preprocessed_sents.append(sent)
-        
+
         self.sents = preprocessed_sents
-                
+
     def remove_repeated_spacing(self):
         """
         A function for reducing whitespaces into one
@@ -206,7 +265,7 @@ class Preprocess():
             if sent:
                 preprocessed_sents.append(sent)
         self.sents = preprocessed_sents
-        
+
     def spacing_sent(self):
         """
         A function for spacing properly
@@ -216,7 +275,7 @@ class Preprocess():
             sent = self.spacing(sent)
             if sent:
                 preprocessed_sents.append(sent)
-        self.sents = preprocessed_sents   
+        self.sents = preprocessed_sents
 
     def remove_linesign(self):
         """
