@@ -37,6 +37,11 @@ def main(config):
     # prepare model for testing
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
+    
+    scaler = (
+        torch.cuda.amp.GradScaler() if config['fp16'] and device != torch.device("cpu") else None
+    )
+    
     model.eval()
 
     output_pred = []
@@ -54,7 +59,12 @@ def main(config):
                 "attention_mask": attention_mask,
                 "token_type_ids": token_type_ids
             }
-            outputs = model(inputs)
+            
+            if scaler:
+                with torch.cuda.amp.autocast():
+                    outputs = model(inputs)
+            else:
+                outputs = model(inputs)
             
             if isinstance(outputs, torch.Tensor):
                 logits = outputs
