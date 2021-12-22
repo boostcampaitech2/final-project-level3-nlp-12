@@ -13,7 +13,7 @@ class Trainer(BaseTrainer):
     Trainer class
     """
     def __init__(self, model, criterion, metric_ftns, optimizer, config, device,
-                 data_loader, valid_data_loader=None, lr_scheduler=None):
+                 data_loader, valid_data_loader=None, lr_scheduler=None, scaler=None):
         super().__init__(model, criterion, metric_ftns, optimizer, config)
         self.config = config
         self.device = device
@@ -24,6 +24,7 @@ class Trainer(BaseTrainer):
         self.valid_data_loader = valid_data_loader
         self.do_validation = self.valid_data_loader is not None
         self.lr_scheduler = lr_scheduler
+        self.scaler = scaler
 
         self.train_metrics = MetricTracker('train/loss', *['train/' + m.__name__ for m in self.metric_ftns])
         self.valid_metrics = MetricTracker('val/loss', *['val/' + m.__name__ for m in self.metric_ftns])
@@ -48,33 +49,58 @@ class Trainer(BaseTrainer):
                 attention_mask = attention_mask.to(self.device)
                 token_type_ids = token_type_ids.to(self.device)
                 targets = targets.to(self.device)
-
-                self.optimizer.zero_grad()
                 
                 inputs = {
                     "input_ids": input_ids,
                     "attention_mask": attention_mask,
                     "token_type_ids": token_type_ids
                 }
-                outputs = self.model(inputs)
+                
+                if self.scaler:
+                    with torch.cuda.amp.autocast():
+                        outputs = self.model(inputs)
+                else:
+                    outputs = self.model(inputs)
                 
                 if isinstance(outputs, torch.Tensor):
                     logits = outputs
                 else:
                     logits = outputs[0]
-            
-                _, preds = torch.max(logits, dim=1)
                 
                 loss = self.criterion(logits, targets)
-                loss.backward()
                 
-                # https://curiousily.com/posts/sentiment-analysis-with-bert-and-hugging-face-using-pytorch-and-python/
-                # avoding exploding gradients
-                nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
-                
-                self.optimizer.step()
+                self.optimizer.zero_grad()
+                            
+                if self.scaler:
+                    # https://eehoeskrap.tistory.com/582
+                    self.scaler.scale(loss).backward()
+                    
+                    # Unscales the gradients of optimizer's assigned params in-place
+                    self.scaler.unscale_(self.optimizer)
+                    
+                    # Since the gradients of optimizer's assigned params are unscaled, clips as usual:
+                    nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+                    
+                    # optimizer's gradients are already unscaled, so scaler.step does not unscale them,
+                    # although it still skips optimizer.step() if the gradients contain infs or NaNs.
+                    self.scaler.step(self.optimizer)
+                    
+                    # Updates the scale for next iteration.
+                    self.scaler.update()
+                else:
+                    loss.backward()
+                    
+                    # https://curiousily.com/posts/sentiment-analysis-with-bert-and-hugging-face-using-pytorch-and-python/
+                    # avoding exploding gradients
+                    nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+                    
+                    self.optimizer.step()
+                    
+                    
                 if self.lr_scheduler is not None:
                     self.lr_scheduler.step()
+                
+                _, preds = torch.max(logits, dim=1) 
                 
                 preds = preds.detach().cpu().numpy()
                 targets = targets.detach().cpu().numpy()
@@ -138,15 +164,21 @@ class Trainer(BaseTrainer):
                 "attention_mask": attention_mask,
                 "token_type_ids": token_type_ids
                 }
-                outputs = self.model(inputs)
+                
+                if self.scaler:
+                    with torch.cuda.amp.autocast():
+                        outputs = self.model(inputs)
+                else:
+                    outputs = self.model(inputs)
                 
                 if isinstance(outputs, torch.Tensor):
                     logits = outputs
                 else:
                     logits = outputs[0]
                     
-                _, preds = torch.max(logits, dim=1)
                 loss = self.criterion(logits, targets)
+                
+                _, preds = torch.max(logits, dim=1)
                 
                 preds = preds.detach().cpu().numpy()
                 targets = targets.detach().cpu().numpy()

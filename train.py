@@ -84,6 +84,9 @@ def main(config):
     
     optimizer = config.init_obj('optimizer', torch.optim, trainable_params)
     lr_scheduler = config.init_obj('lr_scheduler', torch.optim.lr_scheduler, optimizer)
+    scaler = (
+        torch.cuda.amp.GradScaler() if config['trainer']['fp16'] and device != torch.device("cpu") else None
+    )
 
     trainer = Trainer(
         model,
@@ -94,7 +97,8 @@ def main(config):
         device=device,
         data_loader=train_data_loader,
         valid_data_loader=valid_data_loader,
-        lr_scheduler=lr_scheduler
+        lr_scheduler=lr_scheduler,
+        scaler=scaler
     )
 
     trainer.train()
