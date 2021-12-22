@@ -29,31 +29,21 @@
 - [`안성민`](https://github.com/tttangmin)  &nbsp;EDA • Modeling
 - [`양재욱`](https://github.com/didwodnr123) &nbsp; Front-end (Streamlit) • Back-end (FastAPI) • MongoDB •  EDA
 
-## 2. Experiment
-
-### Dataset
-
-- [Korean HateSpeech Dataset](https://github.com/kocohub/korean-hate-speech)
-
+## 2. Model
 
 
 자세한 실험 정보는 해당 [링크](https://jet-rook-fae.notion.site/35b7edef4a3c4c9780f8e8e27bbc1bb8)를 참조해주세요.
-
-## 3. Final Model
-
-
-
-## 4. Flow Chart
+## 3. Flow Chart
 
 ### System Architecture
 
-![image](https://user-images.githubusercontent.com/48538655/146737900-f9885822-08d7-4427-b1b1-3c2c9330ad78.png)
+![image](https://user-images.githubusercontent.com/39722108/147093220-ef42c25c-c240-4911-93c9-ec0eb81af432.png)
 
 ### Pipeline
 
 ![image](https://user-images.githubusercontent.com/48538655/146738181-85996171-e84f-451a-85ca-165098608523.png)
 
-## 5. How to Use  (추후 수정)
+## 4. How to Use  (추후 수정)
 
 ### Dependencies
 
@@ -109,6 +99,8 @@ pip install -r requirements.txt
 ```
 python ___.py
 ```
+## 5. Demo
 
 ## 6. Reference
-
+### Dataset
+- [Korean HateSpeech Detection](https://www.kaggle.com/c/korean-hate-speech-detection/data)
