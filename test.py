@@ -20,7 +20,7 @@ IDX_2_LABEL = {
 def main(config):
     # load model and tokenizer architecture
     model = torch.load(config['model']['type'])
-    tokenizer = AutoTokenizer.from_pretrained(config['model']['args']['name'])
+    tokenizer = AutoTokenizer.from_pretrained(config['tokenizer']['type'])
 
     # setup data_loader instances
     data_loader = getattr(module_data, 'KhsDataLoader')(
@@ -28,7 +28,9 @@ def main(config):
         max_length=config['data_loader']['args']['max_length']
     )
     data_loader = data_loader.get_dataloader(
-        os.path.join(os.getcwd()[:-4], config['data_dir']['test']),
+        name='test',
+        data_dir=config['data_loader']['args']['data_dir'],
+        data_files=config['data_loader']['test_data_file'],
         batch_size=config['data_loader']['args']['batch_size']
     )
 
@@ -63,7 +65,7 @@ def main(config):
             
             output_pred.extend(preds.detach().cpu().numpy())
             
-    dataset = load_dataset(config['data_dir'], data_files=config['test_data_file'], use_auth_token=True)
+    dataset = load_dataset(config['data_loader']['args']['data_dir'], data_files=config['data_loader']['test_data_file'], use_auth_token=True)
     test_df = pd.DataFrame()
     test_df['comments'] = dataset['test']['comments']
     test_df['label'] = output_pred
