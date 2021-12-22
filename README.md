@@ -31,8 +31,16 @@
 
 ## 2. Model
 
+### Transformer + CNN & RNN based model (Best LB f1-score: 64.856)
+![image](https://user-images.githubusercontent.com/20266073/147147702-ff94e551-ea1c-4b4e-bdd5-622a31680442.png)
 
-자세한 실험 정보는 해당 [링크](https://jet-rook-fae.notion.site/35b7edef4a3c4c9780f8e8e27bbc1bb8)를 참조해주세요.
+### Clustering + KNN (Best LB f1-score: 66.192)
+![image](https://user-images.githubusercontent.com/20266073/147147922-aebcf049-1f3f-49b3-954f-a9322d4ec901.png)
+
+### 2nd / 67team (21.12.23 기준)
+![image](https://user-images.githubusercontent.com/20266073/147148111-587f6ca2-0252-4237-ab63-bc9e919c3064.png)
+
+
 ## 3. Flow Chart
 
 ### System Architecture
@@ -45,62 +53,72 @@
 
 ## 4. How to Use  (추후 수정)
 
-### Dependencies
-
-- pandas == 
-
 ### Install Requirements
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
 ### Project Tree
 
 ```
-|-- README.md
+|-- automl
 |-- base
 |   |-- __init__.py
 |   |-- base_data_loader.py
 |   |-- base_model.py
-|   `-- base_trainer.py
-|-- config.json
+|   └-- base_trainer.py
 |-- data_loader
-|   |-- __pycache__
-|   |   `-- data_loaders.cpython-37.pyc
-|   `-- data_loaders.py
+|   └-- data_loaders.py
 |-- logger
 |   |-- __init__.py
 |   |-- logger.py
-|   `-- logger_config.json
+|   └-- logger_config.json
 |-- model
 |   |-- loss.py
+|   |-- lr_scheduler.py
 |   |-- metric.py
-|   `-- model.py
+|   └-- model.py
+|-- prototype
+|-- tokenizer
+|   |-- special_tokens_map.json
+|   |-- tokenizer_config.json
+|   └-- vocab.txt
+|-- trainer
+|   |-- __init__.py
+|   └-- trainer.py
+|-- config.json
+|-- config_automl_test.json
 |-- parse_config.py
+|-- pkm_config.json
 |-- requirements.txt
 |-- simple_test.py
 |-- test.py
+|-- test_automl.py
 |-- train.py
-|-- trainer
-|   |-- __init__.py
-|   `-- trainer.py
-`-- utils
+└-- utils
     |-- __init__.py
     |-- api_response.py
     |-- error_handler.py
-    `-- util.py
+    |-- memory.py
+    |-- query.py
+    |-- util.py
+    └-- utils.py
 ```
 
 ### Getting Started
-
-아래 명령어로 실행 가능합니다.
-
+- Train & Validation
+```python
+python train.py -c config.json
 ```
-python ___.py
+- Inference
+```python
+python test.py -c config.json    # test_config.json
 ```
-## 5. Demo
+
+## 5. Demo (TODO)
 
 ## 6. Reference
-### Dataset
-- [Korean HateSpeech Detection](https://www.kaggle.com/c/korean-hate-speech-detection/data)
+- [Korean HateSpeech Detection Kaggle Competition](https://www.kaggle.com/c/korean-hate-speech-detection/data)
+- [Korean HateSpeech Dataset](https://github.com/kocohub/korean-hate-speech)
+- [BEEP! Korean Corpus of Online News Comments for Toxic Speech Detection](https://aclanthology.org/2020.socialnlp-1.4/)
