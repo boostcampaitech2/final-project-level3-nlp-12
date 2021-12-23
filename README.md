@@ -51,7 +51,7 @@
 
 ![image](https://user-images.githubusercontent.com/48538655/146738181-85996171-e84f-451a-85ca-165098608523.png)
 
-## 4. How to Use  (추후 수정)
+## 4. How to Use
 
 ### Install Requirements
 
