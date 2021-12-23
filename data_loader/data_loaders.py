@@ -1,15 +1,27 @@
-from torchvision import datasets, transforms
-from torch.utils.data import Dataset
-from base import BaseDataLoader
+import random
+import numpy as np
 import pandas as pd
+
 import torch
-from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+from torch.utils.data import Dataset, DataLoader
+
+from torchsampler import ImbalancedDatasetSampler
 from transformers import PreTrainedTokenizer
 from utils import Preprocess, preprocess
 from datasets import load_dataset
+from base import BaseDataLoader
 
-LABEL_2_IDX = {"none": 0, "offensive": 1, "hate": 2}
-IDX_2_LABEL = {0: "none", 1: "offensive", 2: "hate"}
+LABEL_2_IDX = {
+    "none": 0,
+    "offensive": 1,
+    "hate": 2
+}
+IDX_2_LABEL = {
+    0: "none",
+    1: "offensive",
+    2: "hate"
+}
 
 
 class KhsDataLoader(DataLoader):
@@ -29,7 +41,7 @@ class KhsDataLoader(DataLoader):
             add_special_tokens=True,
             max_length=self.max_length,
             truncation=True,
-            padding=True,
+            padding="max_length",
             return_tensors="pt",
             return_token_type_ids=True,
             return_attention_mask=True,
@@ -52,7 +64,7 @@ class KhsDataLoader(DataLoader):
             add_special_tokens=True,
             max_length=self.max_length,
             truncation=True,
-            padding=True,
+            padding="max_length",
             return_tensors="pt",
             return_token_type_ids=True,
             return_attention_mask=True,
@@ -70,17 +82,27 @@ class KhsDataLoader(DataLoader):
         dataset = get_preprocessed_data(datasets[name], name)
         dataset = KhsDataset(dataset, name)
 
+        sampler = None
+        
         if name == "test":
-            collate_fn = self.test_collate_fn
+            collate_fn = self.test_collate_fn   
         else:
             collate_fn = self.train_collate_fn
+            sampler = ImbalancedDatasetSampler(dataset)
+            
+        g = torch.Generator()
+        g.manual_seed(0)
 
         return DataLoader(
             dataset,
             batch_size=batch_size,
             shuffle=False,
+            sampler=sampler,
             collate_fn=collate_fn,
             num_workers=4,
+            pin_memory=True,
+            worker_init_fn=seed_worker,
+            generator=g,
             **kwargs
         )
 
@@ -122,3 +144,10 @@ def get_preprocessed_data(dataset, name):
         )
 
     return out_dataset
+
+
+# https://pytorch.org/docs/stable/notes/randomness.html
+def seed_worker(worker_id): 
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)

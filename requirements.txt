@@ -18,3 +18,4 @@ transformers
 streamlit
 uvicorn
 fastapi
+https://github.com/ufoym/imbalanced-dataset-sampler/archive/master.zip
