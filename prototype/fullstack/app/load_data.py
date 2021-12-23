@@ -25,8 +25,17 @@ torch.backends.cudnn.benchmark = True  # type: ignore
 
 
 def load_data():
-    dataset = load_dataset('AI-it/khs_service_test', data_files={'data':'test_data_ver2.csv'}, use_auth_token=True)
-    return dataset['data']
+    # dataset = pd.read_csv('/Users/yangjaeug/Desktop/GitHub/Product-Serving/practice/03-streamlit-fastapi/app/data/service/test_data_ver2.csv', low_memory=False)
+    # dataset['comment'] = preprocess(dataset['comment'])
+    # dataset = dataset.to_dict('records')
+    # return dataset
+    # dataset = load_dataset('AI-it/khs_service_test', data_files={'data':'test_data_ver2.csv'}, use_auth_token=True)
+    # return dataset['data'].shuffle()
+    dataset = pd.read_csv('/Users/yangjaeug/Desktop/GitHub/Product-Serving/practice/03-streamlit-fastapi/app/data/service/tmp_data.csv')
+    dataset = dataset[:10]
+    dataset['comment'] = preprocess(dataset['comment'])
+    dataset = dataset.to_dict('records')
+    return dataset
 
 def retrieve_comments(keyword: str, dataset) -> list:
     result = []
@@ -118,18 +127,6 @@ class NhDataset(Dataset):
     
     def get_labels(self):
         return self.labels
-
-
-# def load_data():
-    # DATA_PATH = 'AI-it/khs_service_test'
-    # DATA_FILES = {
-    #     "data": "test_data_ver2.csv"
-    # }
-#     dataset = load_dataset(DATA_PATH, data_files=DATA_FILES, use_auth_token=True)
-#     return dataset
-    
-
-
 
 
 if __name__ == '__main__':
