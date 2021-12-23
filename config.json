@@ -1,32 +1,46 @@
 {
-    "name": "Mnist_LeNet",
+    "name": "beep_kcELECTRA_base_hate",
     "n_gpu": 1,
 
-    "arch": {
-        "type": "MnistModel",
-        "args": {}
+    "model": {
+        "type": "BeepKcElectraHateModel",
+        "args": {
+            "name": "beomi/beep-KcELECTRA-base-hate",
+            "num_classes": 3
+        }
+    },
+    "tokenizer": {
+        "type": "tokenizer/"
     },
     "data_loader": {
         "type": "MnistDataLoader",
         "args":{
-            "data_dir": "data/",
-            "batch_size": 128,
+            "data_dir": "AI-it/korean-hate-speech",
+            "batch_size": 16,
+            "max_length": 64,
             "shuffle": true,
             "validation_split": 0.1,
             "num_workers": 2
+        },
+        "data_files": {
+            "train": "train_hate.csv",
+            "valid": "dev_hate.csv"
+        },
+        "test_data_file": {
+            "test": "test_hate_no_label.csv"
         }
     },
     "optimizer": {
-        "type": "Adam",
+        "type": "AdamW",
         "args":{
-            "lr": 0.001,
-            "weight_decay": 0,
-            "amsgrad": true
-        }
+            "lr": 5e-5,
+            "eps": 1e-8
+        },
+        "weight_decay": 0.0
     },
-    "loss": "nll_loss",
+    "loss": "softmax",
     "metrics": [
-        "accuracy", "top_k_acc"
+        "macro_f1"
     ],
     "lr_scheduler": {
         "type": "StepLR",
@@ -36,15 +50,16 @@
         }
     },
     "trainer": {
-        "epochs": 100,
+        "epochs": 2,
 
-        "save_dir": "saved/",
-        "save_period": 1,
+        "save": {
+            "dir": "saved/",
+            "steps": 300,
+            "limits": 3
+        },
         "verbosity": 2,
         
-        "monitor": "min val_loss",
-        "early_stop": 10,
-
-        "tensorboard": true
+        "monitor": "max val/macro_f1",
+        "early_stop": 2
     }
 }

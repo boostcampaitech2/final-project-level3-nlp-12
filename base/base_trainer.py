@@ -1,7 +1,9 @@
+import os
 import torch
+import shutil
 from abc import abstractmethod
 from numpy import inf
-from logger import TensorboardWriter
+from utils import write_json
 
 
 class BaseTrainer:
@@ -19,7 +21,8 @@ class BaseTrainer:
 
         cfg_trainer = config['trainer']
         self.epochs = cfg_trainer['epochs']
-        self.save_period = cfg_trainer['save_period']
+        self.save_steps = cfg_trainer['save']['steps']
+        self.save_limits = cfg_trainer['save']['limits']
         self.monitor = cfg_trainer.get('monitor', 'off')
 
         # configuration to monitor model performance and save best
@@ -29,99 +32,108 @@ class BaseTrainer:
         else:
             self.mnt_mode, self.mnt_metric = self.monitor.split()
             assert self.mnt_mode in ['min', 'max']
-
+            
             self.mnt_best = inf if self.mnt_mode == 'min' else -inf
             self.early_stop = cfg_trainer.get('early_stop', inf)
             if self.early_stop <= 0:
                 self.early_stop = inf
 
-        self.start_epoch = 1
+        self.not_improved_count = 0
 
-        self.checkpoint_dir = config.save_dir
-
-        # setup visualization writer instance                
-        self.writer = TensorboardWriter(config.log_dir, self.logger, cfg_trainer['tensorboard'])
+        self.checkpoint_dir = cfg_trainer['save']['dir']
 
         if config.resume is not None:
             self._resume_checkpoint(config.resume)
-
+    
     @abstractmethod
-    def _train_epoch(self, epoch):
-        """
-        Training logic for an epoch
-
-        :param epoch: Current epoch number
-        """
-        raise NotImplementedError
-
     def train(self):
         """
-        Full training logic
+        Full training logic.
         """
-        not_improved_count = 0
-        for epoch in range(self.start_epoch, self.epochs + 1):
-            result = self._train_epoch(epoch)
+        
+        raise NotImplementedError
+    
+    @abstractmethod
+    def _validation(self, step):
+        """
+        Full validation logic
 
-            # save logged informations into log dict
-            log = {'epoch': epoch}
-            log.update(result)
+        :param step: Current step number
+        """
+        
+        raise NotImplementedError
 
-            # print logged informations to the screen
-            for key, value in log.items():
-                self.logger.info('    {:15s}: {}'.format(str(key), value))
+    def _evaluate_performance(self, log):
+        # evaluate model performance according to configured metric, save best checkpoint as model_best
+        is_best = False
+        if self.mnt_mode != 'off':
+            try:
+                # check whether model performance improved or not, according to specified metric(mnt_metric)
+                improved = (self.mnt_mode == 'min' and log[self.mnt_metric] <= self.mnt_best) or \
+                            (self.mnt_mode == 'max' and log[self.mnt_metric] >= self.mnt_best)
+            except KeyError:
+                self.logger.warning("Warning: Metric '{}' is not found. "
+                                    "Model performance monitoring is disabled.".format(self.mnt_metric))
+                self.mnt_mode = 'off'
+                improved = False
 
-            # evaluate model performance according to configured metric, save best checkpoint as model_best
-            best = False
-            if self.mnt_mode != 'off':
-                try:
-                    # check whether model performance improved or not, according to specified metric(mnt_metric)
-                    improved = (self.mnt_mode == 'min' and log[self.mnt_metric] <= self.mnt_best) or \
-                               (self.mnt_mode == 'max' and log[self.mnt_metric] >= self.mnt_best)
-                except KeyError:
-                    self.logger.warning("Warning: Metric '{}' is not found. "
-                                        "Model performance monitoring is disabled.".format(self.mnt_metric))
-                    self.mnt_mode = 'off'
-                    improved = False
-
-                if improved:
-                    self.mnt_best = log[self.mnt_metric]
-                    not_improved_count = 0
-                    best = True
-                else:
-                    not_improved_count += 1
-
-                if not_improved_count > self.early_stop:
-                    self.logger.info("Validation performance didn\'t improve for {} epochs. "
-                                     "Training stops.".format(self.early_stop))
-                    break
-
-            if epoch % self.save_period == 0:
-                self._save_checkpoint(epoch, save_best=best)
-
-    def _save_checkpoint(self, epoch, save_best=False):
+            if improved:
+                self.mnt_best = log[self.mnt_metric]
+                self.not_improved_count = 0
+                is_best = True
+            else:
+                self.not_improved_count += 1
+                
+        return is_best   
+    
+    def _save_checkpoint(self, log, is_best=False):
         """
         Saving checkpoints
 
         :param epoch: current epoch number
         :param log: logging information of the epoch
-        :param save_best: if True, rename the saved checkpoint to 'model_best.pth'
+        :param save_best: if True, rename the saved checkpoint to 'best_model.pt'
         """
-        arch = type(self.model).__name__
-        state = {
-            'arch': arch,
-            'epoch': epoch,
-            'state_dict': self.model.state_dict(),
-            'optimizer': self.optimizer.state_dict(),
-            'monitor_best': self.mnt_best,
-            'config': self.config
-        }
-        filename = str(self.checkpoint_dir / 'checkpoint-epoch{}.pth'.format(epoch))
-        torch.save(state, filename)
-        self.logger.info("Saving checkpoint: {} ...".format(filename))
-        if save_best:
-            best_path = str(self.checkpoint_dir / 'model_best.pth')
-            torch.save(state, best_path)
-            self.logger.info("Saving current best: model_best.pth ...")
+        save_path = f'{self.checkpoint_dir}models/{self.config["name"]}/'
+        chk_pt_path = save_path + f"steps_{log['steps']}/"
+        
+        # make path if there isn't
+        if not os.path.exists(chk_pt_path):
+            os.makedirs(chk_pt_path)
+        # delete the oldest checkpoint not to exceed save limits
+        if len(os.listdir(save_path)) > self.save_limits:
+            shutil.rmtree(os.path.join(
+                    save_path,
+                    sorted(os.listdir(save_path),key = lambda x : (len(x), x))[0]
+                )
+            )
+        
+        self.logger.info("Saving checkpoint: {} ...".format(chk_pt_path))    
+        torch.save(self.model, os.path.join(chk_pt_path, "model.pt"))
+        torch.save(self.optimizer.state_dict(), os.path.join(chk_pt_path, "optimizer.pt"))
+        
+        # save updated config file to the checkpoint dir
+        write_json(self.config._config, os.path.join(chk_pt_path, "config.json"))
+        write_json(log, os.path.join(chk_pt_path, "log.json"))
+        
+        # save best model.
+        if is_best:
+            best_path = f'{self.checkpoint_dir}best/{self.config["name"]}/'
+            
+            # make path if there isn't
+            if not os.path.exists(best_path):
+                os.makedirs(best_path)
+            # delete old best files
+            for file_ in os.listdir(best_path):
+                os.remove(best_path + file_)
+            
+            self.logger.info("Saving current best: model_best.pt ...")
+            torch.save(self.model, os.path.join(best_path, "best_model.pt"))
+            torch.save(self.optimizer.state_dict(), os.path.join(best_path, "optimizer.pt"))
+            
+            # save updated config file to the checkpoint dir
+            write_json(self.config._config, os.path.join(best_path, "config.json"))
+            write_json(log, os.path.join(best_path, "log.json"))
 
     def _resume_checkpoint(self, resume_path):
         """
