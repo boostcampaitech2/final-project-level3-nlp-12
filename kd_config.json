@@ -1,8 +1,15 @@
 {
-    "name": "beep_kcELECTRA_base_hate",
+    "name": "koelectra_kd_model",
     "n_gpu": 1,
 
     "model": {
+        "type": "BeepKcElectraHateModel",
+        "args": {
+            "name": "monologg/koelectra-small-v3-discriminator",
+            "num_classes": 3
+        }
+    },
+    "teacher_model": {
         "type": "BeepKcElectraHateModel",
         "args": {
             "name": "beomi/beep-KcELECTRA-base-hate",
@@ -10,13 +17,18 @@
         }
     },
     "tokenizer": {
-        "type": "tokenizer/"
+        "student": {
+            "type": "monologg/koelectra-small-v3-discriminator"
+        },
+        "teacher": {
+            "type": "tokenizer/"
+        }
     },
     "data_loader": {
         "type": "MnistDataLoader",
         "args":{
             "data_dir": "AI-it/korean-hate-speech",
-            "batch_size": 16,
+            "batch_size": 64,
             "max_length": 64,
             "shuffle": true,
             "validation_split": 0.1,
@@ -38,7 +50,7 @@
         },
         "weight_decay": 0.0
     },
-    "loss": "softmax",
+    "loss": "knowledge_distillation_loss",
     "metrics": [
         "macro_f1"
     ],
@@ -60,8 +72,6 @@
         "verbosity": 2,
         
         "monitor": "max val/macro_f1",
-        "early_stop": 2,
-
-        "fp16": false
+        "early_stop": 5
     }
 }
