@@ -62,6 +62,7 @@ pip install -r requirements.txt
 ### Project Tree
 
 ```
+|-- assets
 |-- automl
 |-- base
 |   |-- __init__.py
@@ -86,9 +87,12 @@ pip install -r requirements.txt
 |   └-- vocab.txt
 |-- trainer
 |   |-- __init__.py
+|   |-- kd_trainer.py
 |   └-- trainer.py
 |-- config.json
 |-- config_automl_test.json
+|-- kd_config.json
+|-- kd_train.py
 |-- parse_config.py
 |-- pkm_config.json
 |-- requirements.txt
@@ -114,6 +118,10 @@ python train.py -c config.json
 - Inference
 ```python
 python test.py -c config.json    # test_config.json
+```
+- Train (Knowledge Distillation)
+```python
+python kd_train.py -c kd_config.json
 ```
 
 ## 5. Demo (TODO)
