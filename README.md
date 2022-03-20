@@ -31,10 +31,10 @@
 
 ## 2. Model
 
-### Transformer + CNN & RNN based model (Best LB f1-score: 64.856)
+### KcELECTRA Backbone model + CNN & RNN based classifier (Best LB f1-score: 64.856)
 ![image](https://user-images.githubusercontent.com/20266073/147147702-ff94e551-ea1c-4b4e-bdd5-622a31680442.png)
 
-### Clustering + KNN (Best LB f1-score: 66.192)
+### Clustering with Triplet Loss + KNN (Best LB f1-score: 66.192)
 ![image](https://user-images.githubusercontent.com/20266073/147147922-aebcf049-1f3f-49b3-954f-a9322d4ec901.png)
 
 ### 2nd / 67team (21.12.23 기준)
