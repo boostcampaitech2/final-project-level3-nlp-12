@@ -31,7 +31,7 @@
 
 ## 2. Model
 
-### KcELECTRA Backbone model + CNN & RNN based classifier (Best LB f1-score: 64.856)
+### KcELECTRA Backbone Model + CNN & RNN Based Classifier (Best LB f1-score: 64.856)
 ![image](https://user-images.githubusercontent.com/20266073/147147702-ff94e551-ea1c-4b4e-bdd5-622a31680442.png)
 
 ### Clustering with Triplet Loss + KNN (Best LB f1-score: 66.192)
