@@ -130,3 +130,4 @@ python kd_train.py -c kd_config.json
 - [Korean HateSpeech Detection Kaggle Competition](https://www.kaggle.com/c/korean-hate-speech-detection/data)
 - [Korean HateSpeech Dataset](https://github.com/kocohub/korean-hate-speech)
 - [BEEP! Korean Corpus of Online News Comments for Toxic Speech Detection](https://aclanthology.org/2020.socialnlp-1.4/)
+- [PyTorch Template Project By victoresque](https://github.com/victoresque/pytorch-template)
